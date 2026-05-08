@@ -96,6 +96,8 @@ const ROLES = {
       { view:'users',     icon:'fa-users',           label:'Quản lý Người dùng' },
       { view:'companies', icon:'fa-shop',            label:'Doanh nghiệp' },
       { view:'ocop',      icon:'fa-award',           label:'Sản phẩm OCOP' },
+      { view:'map',       icon:'fa-map-location-dot',label:'Bản đồ GIS' },
+      { view:'documents', icon:'fa-book-bookmark',   label:'Văn bản & Hội nghị' },
       { view:'kpi',       icon:'fa-chart-line',      label:'Chỉ tiêu KPI' },
       { view:'settings',  icon:'fa-gear',            label:'Cấu hình Hệ thống' },
     ],

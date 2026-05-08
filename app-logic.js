@@ -120,6 +120,8 @@ function switchView(v) {
   else if (v === 'reports')   renderReports();
   else if (v === 'users')     renderUsers();
   else if (v === 'settings')  renderSettings();
+  else if (v === 'map')       renderMap();
+  else if (v === 'documents') renderDocuments();
 }
 
 // ---- THÔNG BÁO (TOAST) ----
@@ -259,7 +261,7 @@ function renderDashTTKC() {
 function renderDashSO() {
   const waitApproval   = AppData.projects.filter(p => p.status === 1);
   const waitAcceptance = AppData.projects.filter(p => p.status === 3);
-  const totalBudget = AppData.projects.reduce((s,p)=>s+p.budget,0);
+  const totalBudget = AppData.projects.reduce((s,p)=>s+(p.budget||0),0);
   document.getElementById('dash-dynamic-content').innerHTML = `
     <div><h1 class="text-2xl font-black text-slate-900">Sở Công Thương — Quản lý Khuyến công Tỉnh</h1><p class="text-slate-500 text-sm mt-1">Thẩm định hồ sơ và nghiệm thu đề án tại địa phương</p></div>
     <div class="grid grid-cols-2 gap-4">
@@ -301,9 +303,9 @@ function renderDashSO() {
 function renderDashBO() {
   const waitMinistry   = AppData.projects.filter(p => p.status === 2);
   const waitSettle     = AppData.projects.filter(p => p.status === 4);
-  const totalBudget    = AppData.projects.reduce((s,p)=>s+p.budget,0);
-  const totalDisbursed = AppData.projects.reduce((s,p)=>s+p.disbursed,0);
-  const pct = Math.round(totalDisbursed/totalBudget*100);
+  const totalBudget    = AppData.projects.reduce((s,p)=>s+(p.budget||0),0);
+  const totalDisbursed = AppData.projects.reduce((s,p)=>s+(p.disbursedAdvance||0)+(p.disbursedSettle||0)+(p.disbursed||0),0);
+  const pct = totalBudget ? Math.round(totalDisbursed/totalBudget*100) : 0;
   document.getElementById('dash-dynamic-content').innerHTML = `
     <div><h1 class="text-2xl font-black text-slate-900">Bộ / Cục Công Thương — Tổng quan Quốc gia</h1><p class="text-slate-500 text-sm mt-1">Phê duyệt kế hoạch và kiểm soát toàn bộ dòng tiền Khuyến công</p></div>
     <div class="grid grid-cols-2 gap-4">
@@ -416,7 +418,7 @@ function initRoleCharts(rid) {
     
     // 1. Tổng đề án (Line)
     const mockCounts = [45,62,78,95,AppData.projects.length];
-    const mockBudget = [38,52,65,88,Math.round(AppData.projects.reduce((s,p)=>s+p.budget,0)/1e9)];
+    const mockBudget = [38,52,65,88,Math.round(AppData.projects.reduce((s,p)=>s+(p.budget||0),0)/1e9)];
     mkChart('ch-admin-trend','line',{
       labels: years, datasets:[
         {label:'Số đề án',data:mockCounts,borderColor:'#7c3aed',backgroundColor:'#7c3aed22',fill:true,tension:0.4,borderWidth:3,pointBackgroundColor:'#7c3aed'},
@@ -568,6 +570,11 @@ function renderProjects() {
 
   document.getElementById('proj-count').textContent = `${filtered.length} đề án`;
 
+  const createBtn = document.getElementById('btn-create-project');
+  if (createBtn) {
+    createBtn.style.display = role.canCreate ? 'flex' : 'none';
+  }
+
   const tbody = document.getElementById('projects-tbody');
   tbody.innerHTML = filtered.map(p => {
     const co = getCompany(p.companyId);
@@ -701,9 +708,25 @@ function viewProjectDetail(pid) {
         <div class="h-full bg-emerald-500" style="width:${p.budget > 0 ? (p.disbursedSettle/p.budget*100) : 0}%;transition:width 0.8s ease" title="Quyết toán"></div>
       </div>
     </div>
-    <div class="mt-5 flex gap-2 justify-end">
-      ${p.status < 10 ? `<button class="btn-sm bg-blue-600 text-white shadow-md shadow-blue-500/30" onclick="showApproveMenu('${p.id}', this)">Cập nhật trạng thái</button>` : ''}
-      ${p.status >= 3 ? `<button class="btn-sm bg-emerald-600 text-white shadow-md shadow-emerald-500/30" onclick="closeModal('modal-detail');switchView('funds')">Hồ sơ Giải ngân</button>` : ''}
+    <div class="mt-5 flex gap-2 justify-end items-center border-t border-slate-200 pt-4">
+      <!-- Nút Tải lên báo cáo tiến độ -->
+      ${(p.status >= 5 && p.status <= 9 && (State.currentRole === 'CNNT' || State.currentRole === 'TTKC')) ? `<button class="btn-sm bg-white border border-slate-300 text-slate-700 hover:bg-slate-50 mr-auto" onclick="showToast('Đã mở form tải lên Báo cáo tiến độ')"><i class="fa-solid fa-cloud-arrow-up mr-1 text-blue-500"></i> Nộp báo cáo / Hóa đơn</button>` : ''}
+      
+      <!-- Nút Hồ sơ giải ngân -->
+      ${(p.status >= 3 && (State.currentRole === 'BO' || State.currentRole === 'ADMIN')) ? `<button class="btn-sm bg-emerald-600 text-white shadow-md shadow-emerald-500/30" onclick="closeModal('modal-detail');switchView('funds')"><i class="fa-solid fa-vault mr-1"></i> Hồ sơ Giải ngân</button>` : ''}
+      
+      <!-- Nút Trả hồ sơ -->
+      ${((State.currentRole === 'SO' && p.status === 1) || (State.currentRole === 'BO' && p.status === 2)) ? `<button class="btn-sm bg-rose-100 text-rose-700 hover:bg-rose-200 border border-rose-300" onclick="setProjectStatus('${p.id}', ${p.status - 1})"><i class="fa-solid fa-reply mr-1"></i> Yêu cầu làm lại</button>` : ''}
+      
+      <!-- Nút Duyệt theo Role -->
+      ${(() => {
+        const roleDef = ROLES[State.currentRole];
+        const action = roleDef.actions && roleDef.actions[p.status];
+        return action ? `<button class="btn-sm ${action.cls} shadow-md" onclick="setProjectStatus('${p.id}', ${action.nextStatus})">${action.label}</button>` : '';
+      })()}
+      
+      <!-- Nút Ép Trạng thái (Chỉ Admin) -->
+      ${(p.status < 10 && State.currentRole === 'ADMIN') ? `<button class="btn-sm bg-slate-800 text-white shadow-md" onclick="showApproveMenu('${p.id}', this)"><i class="fa-solid fa-bolt mr-1"></i> Ép trạng thái</button>` : ''}
     </div>`;
 
   // Các bước quy trình (State Machine) — Thanh tiến độ
@@ -812,8 +835,8 @@ function renderFunds() {
   }).join('');
 
   // Chỉ số KPI tổng hợp
-  const totalBudget = funded.reduce((s,p)=>s+p.budget,0);
-  const totalDis    = funded.reduce((s,p)=>s+(p.disbursedAdvance||0)+(p.disbursedSettle||0),0);
+  const totalBudget = funded.reduce((s,p)=>s+(p.budget||0),0);
+  const totalDis    = funded.reduce((s,p)=>s+(p.disbursedAdvance||0)+(p.disbursedSettle||0)+(p.disbursed||0),0);
   document.getElementById('fund-total-budget').textContent    = formatVND(totalBudget);
   document.getElementById('fund-total-disbursed').textContent = formatVND(totalDis);
   document.getElementById('fund-remaining').textContent       = formatVND(totalBudget - totalDis);
@@ -897,11 +920,11 @@ function initFundCharts(funded, totalBudget, totalDis) {
   // Biểu đồ 3: Cột theo lĩnh vực — Tổng kinh phí mỗi lĩnh vực
   const fieldBudgets = FIELDS.map((f,i) => {
     const ps = funded.filter(p => p.field === i);
-    return { budget: ps.reduce((s,p)=>s+p.budget,0), dis: ps.reduce((s,p)=>s+(p.disbursedAdvance||0)+(p.disbursedSettle||0),0) };
+    return { budget: ps.reduce((s,p)=>s+(p.budget||0),0), dis: ps.reduce((s,p)=>s+(p.disbursedAdvance||0)+(p.disbursedSettle||0)+(p.disbursed||0),0) };
   }).filter(f => f.budget > 0);
   const fieldLabels  = FIELDS.filter((f,i) => funded.some(p=>p.field===i)).map(f=>f.length>22?f.slice(0,20)+'…':f);
-  const fieldBudArr  = FIELDS.map((f,i) => funded.filter(p=>p.field===i).reduce((s,p)=>s+p.budget,0)).filter(v=>v>0);
-  const fieldDisArr  = FIELDS.map((f,i) => funded.filter(p=>p.field===i).reduce((s,p)=>s+(p.disbursedAdvance||0)+(p.disbursedSettle||0),0)).filter(v=>v>0);
+  const fieldBudArr  = FIELDS.map((f,i) => funded.filter(p=>p.field===i).reduce((s,p)=>s+(p.budget||0),0)).filter(v=>v>0);
+  const fieldDisArr  = FIELDS.map((f,i) => funded.filter(p=>p.field===i).reduce((s,p)=>s+(p.disbursedAdvance||0)+(p.disbursedSettle||0)+(p.disbursed||0),0)).filter(v=>v>0);
   const fieldColors  = ['#3b82f6','#10b981','#f59e0b','#ef4444','#8b5cf6','#0891b2','#d97706','#64748b'];
 
   State.charts['ch-fund-field'] = new Chart(document.getElementById('ch-fund-field'), {
@@ -926,40 +949,90 @@ function initFundCharts(funded, totalBudget, totalDis) {
 
 function openDisbursalModal(pid) {
   const p = AppData.projects.find(x => x.id === pid);
+  const currentDisbursed = (p.disbursedAdvance||0) + (p.disbursedSettle||0);
+  const remaining = p.budget - currentDisbursed;
+  
   document.getElementById('dis-project-name').textContent = p.name;
   document.getElementById('dis-budget').textContent = p.budget.toLocaleString() + ' VNĐ';
   document.getElementById('dis-advance').textContent = (p.disbursedAdvance||0).toLocaleString() + ' VNĐ';
   document.getElementById('dis-settle').textContent = (p.disbursedSettle||0).toLocaleString() + ' VNĐ';
-  document.getElementById('dis-max').textContent = '150,000,000 VNĐ (Thông tư 28)';
-  document.getElementById('dis-amount').value = '';
+  document.getElementById('dis-max').textContent = 'Còn lại: ' + remaining.toLocaleString() + ' VNĐ (Tối đa 150tr theo TT28)';
+  
+  const disAmountInput = document.getElementById('dis-amount');
+  disAmountInput.value = '';
+  disAmountInput.oninput = (e) => checkDisLimit(e.target.value, remaining);
+  
   document.getElementById('dis-error').classList.add('hidden');
-  document.getElementById('dis-btn-submit').onclick = () => submitDisbursal(pid);
+  document.getElementById('dis-btn-submit').onclick = () => submitDisbursal(pid, remaining);
   openModal('modal-disbursal');
 }
 
-function checkDisLimit(val) {
+function checkDisLimit(val, remaining) {
   const err = document.getElementById('dis-error');
   const inp = document.getElementById('dis-amount');
-  if(Number(val) > 150000000) {
+  const numVal = Number(val);
+  
+  if(numVal > 150000000 || numVal > remaining) {
     err.classList.remove('hidden');
-    inp.classList.add('border-rose-400');
+    err.textContent = numVal > remaining ? 'Vượt quá số kinh phí còn lại!' : 'Vượt quá định mức 150tr (TT28)!';
+    inp.classList.add('border-rose-400', 'bg-rose-50');
   } else {
     err.classList.add('hidden');
-    inp.classList.remove('border-rose-400');
+    inp.classList.remove('border-rose-400', 'bg-rose-50');
   }
 }
 
-function submitDisbursal(pid) {
+function submitDisbursal(pid, remaining) {
   const val = Number(document.getElementById('dis-amount').value);
   if(!val) { showToast('Vui lòng nhập số tiền!', 'error'); return; }
-  if(val > 150000000) { showToast('Vượt định mức TT28! Không thể thực chi.', 'error'); return; }
+  if(val > 150000000) { showToast('Vượt định mức 150tr (TT28)! Không thể thực chi.', 'error'); return; }
+  if(val > remaining) { showToast('Số tiền giải ngân vượt quá tổng mức được duyệt!', 'error'); return; }
+  
   const p = AppData.projects.find(x => x.id === pid);
-  p.disbursed += val;
-  if((p.disbursedAdvance + p.disbursedSettle) >= p.budget * 0.95) p.status = 4;
-  else if(p.status < 2) p.status = 2;
+  
+  // Tạm thời để đơn giản gán vào Settle
+  const disType = document.getElementById('dis-type') ? document.getElementById('dis-type').value : 'settle';
+  if (disType === 'advance') {
+    p.disbursedAdvance = (p.disbursedAdvance || 0) + val;
+  } else {
+    p.disbursedSettle = (p.disbursedSettle || 0) + val;
+  }
+  
+  const currentDisbursed = p.disbursedAdvance + p.disbursedSettle;
+  
+  // Tự động chuyển sang Thanh lý quyết toán nếu đã giải ngân trên 90%
+  if(currentDisbursed >= p.budget * 0.9 && p.status < 9) {
+    p.status = 9; 
+    showToast(`Đề án '${p.name}' đã tự động chuyển sang Thanh lý hợp đồng!`, 'success');
+  }
+  
   closeModal('modal-disbursal');
   showToast(`Giải ngân ${formatVND(val)} cho đề án ${pid} thành công!`);
   renderFunds();
+}
+
+function saveNewCompany() {
+  const name = document.getElementById('co-name').value;
+  const type = document.getElementById('co-type').value;
+  const tax = document.getElementById('co-tax').value;
+  
+  if(!name) { showToast('Vui lòng nhập tên doanh nghiệp!', 'error'); return; }
+  if(!type || type === 'invalid') { showToast('Loại hình doanh nghiệp không hợp lệ!', 'error'); return; }
+  
+  const newId = 'CO' + (AppData.companies.length + 1).toString().padStart(3, '0');
+  AppData.companies.unshift({
+    id: newId,
+    name: name,
+    sector: type === 'dnnvv' ? 'Doanh nghiệp Nhỏ và Vừa' : type === 'htx' ? 'Hợp tác xã' : 'Hộ kinh doanh',
+    location: 'Chưa cập nhật',
+    icon: 'fa-building',
+    tax: tax || 'N/A'
+  });
+  
+  closeModal('modal-create-company');
+  showToast('Đã thêm mới đơn vị thụ hưởng ' + name);
+  renderCompanies();
+  populateCompanyDropdown();
 }
 
 // ---- DOANH NGHIỆP ----
@@ -1134,7 +1207,7 @@ function renderDashAdmin() {
   const total    = AppData.projects.length;
   const pending  = AppData.projects.filter(p => p.status > 0 && p.status < 10).length;
   const done     = AppData.projects.filter(p => p.status === 10).length;
-  const totalBudget = AppData.projects.reduce((s,p)=>s+p.budget,0);
+  const totalBudget = AppData.projects.reduce((s,p)=>s+(p.budget || 0),0);
   const totalDis    = AppData.projects.reduce((s,p)=>s+(p.disbursedAdvance||0)+(p.disbursedSettle||0),0);
 
   document.getElementById('dash-dynamic-content').innerHTML = `
@@ -1181,7 +1254,7 @@ function renderDashAdmin() {
       ${kpiCard('Tổng đề án', total, 'Toàn quốc', '#7c3aed')}
       ${kpiCard('Đang xử lý', pending, 'Hồ sơ 1-9', '#f59e0b')}
       ${kpiCard('Hoàn tất', done, 'Đã quyết toán (bước 10)', '#10b981')}
-      ${kpiCard('Tổng kinh phí', formatVND(totalBudget), 'Kế hoạch 2024', '#dc2626')}
+      ${kpiCard('Tổng kinh phí', formatVND(totalBudget||0), 'Kế hoạch 2024', '#dc2626')}
     </div>
 
     <!-- Quick actions -->
@@ -1192,7 +1265,7 @@ function renderDashAdmin() {
       </div>
       <div class="panel p-4 flex items-center gap-3 cursor-pointer hover:shadow-md transition-shadow" onclick="switchView('funds')">
         <div class="w-10 h-10 rounded-xl flex items-center justify-center shrink-0" style="background:#10b98120"><i class="fa-solid fa-vault" style="color:#10b981"></i></div>
-        <div><div class="font-black text-slate-800 text-sm">Kinh phí & Quyết toán</div><div class="text-xs text-slate-400">${formatVND(totalDis)} đã chi</div></div>
+        <div><div class="font-black text-slate-800 text-sm">Kinh phí & Quyết toán</div><div class="text-xs text-slate-400">${formatVND(totalDis||0)} đã chi</div></div>
       </div>
       <div class="panel p-4 flex items-center gap-3 cursor-pointer hover:shadow-md transition-shadow" onclick="switchView('reports')">
         <div class="w-10 h-10 rounded-xl flex items-center justify-center shrink-0" style="background:#0891b220"><i class="fa-solid fa-file-contract" style="color:#0891b2"></i></div>
@@ -1282,7 +1355,7 @@ function renderDashAdmin() {
           <td class="px-4 py-3 font-bold text-slate-400 text-xs">${p.id}</td>
           <td class="px-4 py-3 font-semibold text-slate-800">${p.name}</td>
           <td class="px-4 py-3 text-slate-500 text-xs">${co.name||'-'}</td>
-          <td class="px-4 py-3 text-right font-mono font-bold text-xs">${formatVND(p.budget)}</td>
+          <td class="px-4 py-3 text-right font-mono font-bold text-xs">${formatVND(p.budget||0)}</td>
           <td class="px-4 py-3 text-center">${statusBadge(p.status)}</td>
           <td class="px-4 py-3 text-center">${act ? `<button class="action-btn ${act.cls} border-0 text-xs" onclick="event.stopPropagation();roleAction('${p.id}',${act.nextStatus},'${act.label}')">${act.label}</button>` : '<span class="text-xs text-slate-400">—</span>'}</td>
         </tr>`;
@@ -1323,7 +1396,7 @@ function renderReports() {
       <table class="w-full text-sm"><thead><tr class="text-[10px] text-slate-400 font-black uppercase bg-slate-50 border-b border-slate-100">
         <th class="px-4 py-3 text-left">STT</th><th class="px-4 py-3 text-left">Nội dung chỉ tiêu</th><th class="px-4 py-3 text-right">Kế hoạch</th><th class="px-4 py-3 text-right">Thực hiện</th><th class="px-4 py-3 text-right">Tỷ lệ</th>
       </tr></thead><tbody>
-      ${[['1','Số đề án khuyến công','60',''+AppData.projects.length,''],['2','Kinh phí kế hoạch (tỷ đ)','100',''+Math.round(AppData.projects.reduce((s,p)=>s+p.budget,0)/1e9),''],['3','Số cơ sở CNNT được hỗ trợ','120',''+AppData.companies.length,''],['4','Số lao động được đào tạo','500','3450',''],['5','Số sản phẩm OCOP bình chọn','30',''+AppData.products?.length||'5','']].map(([stt,noi,kh,th],i) => {const pct=Math.round(parseInt(th)/parseInt(kh)*100)||'—';return `<tr class="border-b border-slate-50 hover:bg-slate-50"><td class="px-4 py-3 text-slate-400 font-bold">${stt}</td><td class="px-4 py-3 font-semibold text-slate-800">${noi}</td><td class="px-4 py-3 text-right font-mono">${kh}</td><td class="px-4 py-3 text-right font-mono font-bold text-emerald-600">${th}</td><td class="px-4 py-3 text-right"><span class="font-black text-xs ${pct>=100?'text-emerald-600':pct>=70?'text-amber-600':'text-rose-600'}">${pct}%</span></td></tr>`}).join('')}
+      ${[['1','Số đề án khuyến công','60',''+AppData.projects.length,''],['2','Kinh phí kế hoạch (tỷ đ)','100',''+Math.round(AppData.projects.reduce((s,p)=>s+(p.budget||0),0)/1e9),''],['3','Số cơ sở CNNT được hỗ trợ','120',''+AppData.companies.length,''],['4','Số lao động được đào tạo','500','3450',''],['5','Số sản phẩm OCOP bình chọn','30',''+AppData.products?.length||'5','']].map(([stt,noi,kh,th],i) => {const pct=Math.round(parseInt(th)/parseInt(kh)*100)||'—';return `<tr class="border-b border-slate-50 hover:bg-slate-50"><td class="px-4 py-3 text-slate-400 font-bold">${stt}</td><td class="px-4 py-3 font-semibold text-slate-800">${noi}</td><td class="px-4 py-3 text-right font-mono">${kh}</td><td class="px-4 py-3 text-right font-mono font-bold text-emerald-600">${th}</td><td class="px-4 py-3 text-right"><span class="font-black text-xs ${pct>=100?'text-emerald-600':pct>=70?'text-amber-600':'text-rose-600'}">${pct}%</span></td></tr>`}).join('')}
       </tbody></table>
     </div>`;
 }
@@ -1392,4 +1465,52 @@ function _addViewSection(id) {
   d.id = 'view-' + id;
   d.className = 'view-section p-6 space-y-5';
   container.appendChild(d);
+}
+
+function renderMap() {
+  const el = document.getElementById('view-map');
+  if (!el) _addViewSection('map');
+  document.querySelectorAll('.view-section').forEach(s => s.classList.remove('active-view'));
+  const v = document.getElementById('view-map');
+  if (!v) return;
+  v.classList.add('active-view');
+  v.innerHTML = `
+    <div class="flex justify-between items-center mb-2">
+      <div><h1 class="text-2xl font-black text-slate-900">Bản đồ số Phân bổ (GIS)</h1><p class="text-slate-500 text-sm mt-1">Giám sát địa điểm Đơn vị thụ hưởng và điểm phân phối OCOP</p></div>
+    </div>
+    <div class="panel p-4 h-[600px] flex items-center justify-center bg-slate-100 relative overflow-hidden">
+      <div class="absolute inset-0 opacity-40 bg-[url('https://upload.wikimedia.org/wikipedia/commons/thumb/c/ca/Vietnam_location_map.svg/1024px-Vietnam_location_map.svg.png')] bg-cover bg-center"></div>
+      <div class="z-10 bg-white/90 backdrop-blur p-6 rounded-2xl shadow-xl text-center">
+        <i class="fa-solid fa-map-location-dot text-4xl text-rose-500 mb-3"></i>
+        <h3 class="font-bold text-slate-800 text-lg">Module GIS đang được tích hợp</h3>
+        <p class="text-slate-500 text-sm mt-2 max-w-sm">Hệ thống đang kết nối dữ liệu địa lý thực tế từ vệ tinh để render bản đồ động (Dự kiến trong Phiên bản chính thức).</p>
+      </div>
+    </div>`;
+}
+
+function renderDocuments() {
+  const el = document.getElementById('view-documents');
+  if (!el) _addViewSection('documents');
+  document.querySelectorAll('.view-section').forEach(s => s.classList.remove('active-view'));
+  const v = document.getElementById('view-documents');
+  if (!v) return;
+  v.classList.add('active-view');
+  v.innerHTML = `
+    <div class="flex justify-between items-center mb-2">
+      <div><h1 class="text-2xl font-black text-slate-900">Văn bản Pháp luật & Hội nghị</h1><p class="text-slate-500 text-sm mt-1">Quản lý danh mục Nội bộ</p></div>
+    </div>
+    <div class="grid grid-cols-2 gap-5">
+      <div class="panel p-5">
+        <h3 class="font-bold text-slate-800 border-b border-slate-100 pb-3 mb-3"><i class="fa-solid fa-gavel mr-2 text-brand"></i>Hệ thống Văn bản Khuyến công</h3>
+        <ul class="space-y-3">
+          ${['Quyết định 1881/QĐ-TTg phê duyệt chương trình KC 2021-2025','Thông tư 34/2022/TT-BCT hướng dẫn báo cáo Khuyến công','Thông tư 28/2018/TT-BTC quản lý kinh phí đề án','Nghị định 45/2012/NĐ-CP về khuyến công'].map(x => `<li class="flex gap-3 text-sm"><i class="fa-solid fa-file-pdf text-rose-500 mt-1"></i><span class="text-slate-700 font-semibold hover:text-brand cursor-pointer">${x}</span></li>`).join('')}
+        </ul>
+      </div>
+      <div class="panel p-5">
+        <h3 class="font-bold text-slate-800 border-b border-slate-100 pb-3 mb-3"><i class="fa-solid fa-handshake mr-2 text-emerald-600"></i>Hội nghị Xúc tiến TMDL</h3>
+        <ul class="space-y-3">
+          ${['Hội chợ triển lãm sản phẩm CNNT tiêu biểu miền Bắc','Hội nghị giao thương kết nối cung cầu năm 2024','Tập huấn nâng cao năng lực xuất khẩu TMĐT'].map(x => `<li class="flex gap-3 text-sm"><i class="fa-solid fa-bullhorn text-amber-500 mt-1"></i><span class="text-slate-700 font-semibold hover:text-emerald-600 cursor-pointer">${x}</span></li>`).join('')}
+        </ul>
+      </div>
+    </div>`;
 }

@@ -193,7 +193,10 @@
       <div id="fund-charts-section" class="space-y-5"></div>
     </div>
     <div id="view-companies" class="view-section p-6 space-y-5">
-      <div><h1 class="text-2xl font-black text-slate-900">Doanh nghiệp Thụ hưởng</h1><p class="text-slate-500 text-sm mt-1">Click vào doanh nghiệp để xem các đề án liên quan</p></div>
+      <div class="flex justify-between items-center">
+        <div><h1 class="text-2xl font-black text-slate-900">Doanh nghiệp Thụ hưởng</h1><p class="text-slate-500 text-sm mt-1">Click vào doanh nghiệp để xem các đề án liên quan</p></div>
+        <button id="btn-create-company" onclick="openModal('modal-create-company')" class="bg-blue-600 text-white px-5 py-2.5 rounded-xl font-bold shadow-lg shadow-blue-500/30 hover:opacity-90 flex items-center gap-2"><i class="fa-solid fa-building-circle-check"></i>THÊM MỚI DOANH NGHIỆP</button>
+      </div>
       <div id="companies-grid" class="grid grid-cols-4 gap-4"></div>
     </div>
     <div id="view-ocop" class="view-section p-6 space-y-5">
@@ -298,6 +301,41 @@
       </div>
     </div>
     <div class="px-6 pb-6 flex gap-3"><button onclick="closeModal('modal-disbursal')" class="flex-1 py-3 bg-slate-100 text-slate-600 rounded-xl font-bold hover:bg-slate-200">Hủy</button><button id="dis-btn-submit" class="flex-1 py-3 bg-emerald-600 text-white rounded-xl font-black hover:bg-emerald-700 shadow-lg">XÁC NHẬN CHI</button></div>
+  </div>
+</div>
+
+<!-- Modal Create Company -->
+<div id="modal-create-company" class="modal-bg hidden">
+  <div class="bg-white w-[500px] rounded-2xl shadow-2xl flex flex-col overflow-hidden scale-95 transition-transform" onclick="event.stopPropagation()">
+    <div class="p-5 bg-blue-600 flex justify-between items-center shrink-0">
+      <h2 class="text-white font-black text-lg"><i class="fa-solid fa-building-circle-check mr-2"></i>Thêm mới Doanh nghiệp</h2>
+      <button onclick="closeModal('modal-create-company')" class="text-white/60 hover:text-white text-xl"><i class="fa-solid fa-xmark"></i></button>
+    </div>
+    <div class="p-6 space-y-4">
+      <div>
+        <label class="block text-xs font-bold text-slate-500 uppercase mb-1">Tên Cơ sở / Doanh nghiệp <span class="text-rose-500">*</span></label>
+        <input id="co-name" type="text" class="w-full border border-slate-300 rounded-lg px-3 py-2 outline-none focus:border-blue-500 text-sm font-semibold" placeholder="Ví dụ: Công ty TNHH ABC">
+      </div>
+      <div>
+        <label class="block text-xs font-bold text-slate-500 uppercase mb-1">Loại hình Doanh nghiệp (Theo TT 46/2012) <span class="text-rose-500">*</span></label>
+        <select id="co-type" class="w-full border border-slate-300 rounded-lg px-3 py-2 outline-none focus:border-blue-500 text-sm font-semibold" onchange="document.getElementById('co-type-error').classList.toggle('hidden', this.value !== 'invalid')">
+          <option value="">-- Chọn loại hình hợp lệ --</option>
+          <option value="dnnvv">1. Doanh nghiệp Nhỏ và Vừa (SME)</option>
+          <option value="htx">2. Hợp tác xã / Tổ hợp tác</option>
+          <option value="hkd">3. Hộ kinh doanh cá thể</option>
+          <option value="invalid">4. Tập đoàn / Doanh nghiệp lớn (Không hợp lệ)</option>
+        </select>
+        <div id="co-type-error" class="hidden text-xs text-rose-500 font-bold mt-1"><i class="fa-solid fa-circle-exclamation mr-1"></i> Đối tượng này không thuộc diện được hỗ trợ theo quy định!</div>
+      </div>
+      <div>
+        <label class="block text-xs font-bold text-slate-500 uppercase mb-1">Mã số Thuế / Đăng ký KD</label>
+        <input id="co-tax" type="text" class="w-full border border-slate-300 rounded-lg px-3 py-2 outline-none focus:border-blue-500 text-sm font-mono" placeholder="Nhập mã số thuế...">
+      </div>
+    </div>
+    <div class="bg-slate-50 p-4 border-t border-slate-200 flex justify-end gap-3">
+      <button onclick="closeModal('modal-create-company')" class="px-5 py-2.5 font-bold text-slate-500 hover:bg-slate-200 rounded-lg">Hủy</button>
+      <button onclick="showToast('Thêm mới thành công!'); closeModal('modal-create-company')" class="bg-blue-600 text-white px-6 py-2.5 rounded-lg font-bold shadow-md hover:bg-blue-700">Lưu thông tin</button>
+    </div>
   </div>
 </div>
 </div><!-- end #main-app -->
