@@ -1,0 +1,322 @@
+<!DOCTYPE html><html lang="vi"><head><meta charset="utf-8"/><meta name="viewport" content="width=device-width,initial-scale=1"/><title>Cổng Thông tin Khuyến Công Điện tử</title><script src="https://cdn.tailwindcss.com"></script><script src="https://cdn.jsdelivr.net/npm/chart.js"></script><link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css"><style>@import url('https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap');*{font-family:'Plus Jakarta Sans',sans-serif}
+/* ===== SIDEBAR — Trống Đồng Theme ===== */
+.sidebar{background:#8b0000;background-image:url('images/anh3.jpg');background-size:cover;background-position:center;position:relative;overflow:hidden}.sidebar::before{content:'';position:absolute;inset:0;background:linear-gradient(160deg,rgba(120,0,0,0.4) 0%,rgba(50,0,0,0.6) 100%);z-index:0}.sidebar>*{position:relative;z-index:1}
+/* NAV ITEMS — gold text on red */
+.nav-item{color:rgba(253,230,138,0.65);border-radius:.5rem;padding:.75rem 1rem;display:flex;align-items:center;cursor:pointer;transition:all .2s;font-size:.8rem}.nav-item.active{background:linear-gradient(135deg,rgba(202,138,4,0.55),rgba(120,53,15,0.7));color:#fef3c7;font-weight:700;box-shadow:0 4px 15px rgba(0,0,0,0.4);border:1px solid rgba(253,230,138,0.25)}.nav-item:hover:not(.active){background:rgba(253,230,138,0.1);color:#fde68a}
+/* ===== GOVERNMENT HEADER ===== */
+.gov-banner{background:linear-gradient(135deg,#b91c1c 0%,#7f1d1d 100%);border-bottom:3px solid #b45309;position:relative;overflow:hidden}.gov-banner::after{content:'';position:absolute;right:0;top:0;bottom:0;width:340px;background:url('images/bg-crane.png') no-repeat right center;background-size:contain;opacity:0.12;pointer-events:none}
+/* ===== CONTENT WATERMARK ===== */
+.content-area{background-color:#f5f3f0;position:relative}.content-area::before{content:'';position:fixed;right:-2%;bottom:-5%;width:55%;aspect-ratio:16/9;background:url('images/bg-crane.png') no-repeat right bottom;background-size:contain;opacity:0.04;z-index:0;pointer-events:none}
+/* PANELS & CARDS */
+.panel{background:rgba(255,255,255,0.97);border:1px solid #e7e0d6;border-radius:.75rem;box-shadow:0 1px 4px rgba(139,0,0,0.06);position:relative;z-index:1}.action-btn{background:#eff6ff;color:#2563eb;border:1px solid #bfdbfe;padding:.35rem .85rem;border-radius:.5rem;font-size:.7rem;font-weight:700;cursor:pointer;transition:all .2s}.action-btn:hover{background:#2563eb;color:#fff}.btn-sm{padding:.5rem 1.25rem;border-radius:.5rem;font-size:.8rem;font-weight:700;cursor:pointer}.view-section{display:none}.view-section.active-view{display:block}.ctx-menu{position:fixed;background:#fff;border:1px solid #e2e8f0;border-radius:.75rem;box-shadow:0 10px 30px rgba(0,0,0,.15);z-index:999;min-width:160px;overflow:hidden}.ctx-item{padding:.65rem 1rem;font-size:.8rem;font-weight:600;cursor:pointer;color:#374151}.ctx-item:hover{background:#fef3c7;color:#92400e}.ctx-item.active{color:#92400e;background:#fef3c7}.modal-bg{background:rgba(50,0,0,0.55);backdrop-filter:blur(6px);position:fixed;inset:0;z-index:50;display:flex;align-items:center;justify-content:center}@keyframes fadeIn{from{opacity:0;transform:translateY(8px)}to{opacity:1;transform:translateY(0)}}.fade-in{animation:fadeIn .25s ease}@keyframes toastIn{from{opacity:0;transform:translateY(20px)}to{opacity:1;transform:translateY(0)}}.toast-enter{animation:toastIn .3s ease}@keyframes toastOut{to{opacity:0;transform:translateY(10px)}}.toast-exit{animation:toastOut .3s ease forwards}::-webkit-scrollbar{width:5px;height:5px}::-webkit-scrollbar-thumb{background:#d4c4a0;border-radius:10px}::-webkit-scrollbar-thumb:hover{background:#b45309}</style><script>tailwind.config={theme:{extend:{colors:{brand:'#b45309',dark:'#7f1d1d'}}}}</script></head>
+<body class="overflow-hidden bg-[#f5f3f0] text-sm">
+
+<!-- ============================================================ -->
+<!-- LOGIN SCREEN -->
+<!-- ============================================================ -->
+<div id="login-screen" class="fixed inset-0 z-[200] flex flex-col" style="background:#5a0000">
+  <!-- Background: drum image -->
+  <div class="absolute inset-0" style="background-image:url('images/anh3.jpg');background-size:cover;background-position:center"></div>
+  <div class="absolute inset-0" style="background:linear-gradient(135deg,rgba(110,0,0,0.3) 0%,rgba(40,0,0,0.5) 100%)"></div>
+  <!-- Crane watermark right -->
+  <div class="absolute right-0 top-0 bottom-0 w-1/2 pointer-events-none" style="background-image:url('images/bg-crane.png');background-repeat:no-repeat;background-position:right center;background-size:55%;opacity:0.09"></div>
+
+  <!-- Content -->
+  <div class="relative z-10 flex flex-col items-center justify-center flex-1 px-6 py-8">
+    <!-- Logo -->
+    <div class="text-center mb-8">
+      <div class="w-20 h-20 rounded-full mx-auto mb-4 flex items-center justify-center shadow-2xl" style="background:linear-gradient(135deg,#b45309,#78350f);border:3px solid rgba(253,230,138,0.5)">
+        <i class="fa-solid fa-industry text-3xl" style="color:#fef3c7"></i>
+      </div>
+      <div class="text-[10px] font-black uppercase tracking-widest mb-1" style="color:rgba(253,230,138,0.65)">BỘ CÔNG THƯƠNG — CỤC CÔNG NGHIỆP ĐỊA PHƯƠNG</div>
+      <h1 class="text-2xl font-black text-white" style="letter-spacing:0.06em">HỆ THỐNG QUẢN LÝ KHUYẾN CÔNG</h1>
+      <p class="text-sm mt-2" style="color:rgba(253,230,138,0.5)">Cổng thông tin Khuyến công Điện tử — Phiên bản 3.0</p>
+    </div>
+
+    <!-- Role selection card -->
+    <div class="rounded-2xl p-7 w-full" style="max-width:860px;background:rgba(255,255,255,0.05);border:1px solid rgba(253,230,138,0.2);backdrop-filter:blur(16px)">
+      <h2 class="text-center font-black text-white mb-1" style="font-size:1rem">Chọn vai trò đăng nhập</h2>
+      <p class="text-center text-xs mb-6" style="color:rgba(253,230,138,0.45)">Hệ thống sẽ hiển thị giao diện và chức năng phù hợp với vai trò của bạn</p>
+      <div class="grid grid-cols-5 gap-3">
+
+        <!-- CNNT -->
+        <button onclick="loginAs('CNNT')" class="login-role-card" style="--rc:#16a34a">
+          <div class="role-icon" style="background:#16a34a"><i class="fa-solid fa-shop"></i></div>
+          <div class="role-label">Cơ sở CNNT</div>
+          <div class="role-desc">Cơ sở công nghiệp nông thôn đăng ký hỗ trợ</div>
+          <div class="role-action">Vào hệ thống →</div>
+        </button>
+
+        <!-- TTKC -->
+        <button onclick="loginAs('TTKC')" class="login-role-card" style="--rc:#0891b2">
+          <div class="role-icon" style="background:#0891b2"><i class="fa-solid fa-building-columns"></i></div>
+          <div class="role-label">TT Khuyến công</div>
+          <div class="role-desc">Hỗ trợ lập hồ sơ cho cơ sở CNNT cấp tỉnh</div>
+          <div class="role-action">Vào hệ thống →</div>
+        </button>
+
+        <!-- SO -->
+        <button onclick="loginAs('SO')" class="login-role-card" style="--rc:#d97706">
+          <div class="role-icon" style="background:#d97706"><i class="fa-solid fa-landmark"></i></div>
+          <div class="role-label">Sở Công Thương</div>
+          <div class="role-desc">Thẩm định & nghiệm thu đề án cấp Tỉnh</div>
+          <div class="role-action">Vào hệ thống →</div>
+        </button>
+
+        <!-- BO -->
+        <button onclick="loginAs('BO')" class="login-role-card" style="--rc:#dc2626">
+          <div class="role-icon" style="background:#dc2626"><i class="fa-solid fa-flag"></i></div>
+          <div class="role-label">Bộ / Cục CT</div>
+          <div class="role-desc">Phê duyệt kế hoạch và giám sát quốc gia</div>
+          <div class="role-action">Vào hệ thống →</div>
+        </button>
+
+        <!-- ADMIN -->
+        <button onclick="loginAs('ADMIN')" class="login-role-card login-role-admin" style="--rc:#7c3aed">
+          <div class="role-icon" style="background:linear-gradient(135deg,#7c3aed,#4c1d95)"><i class="fa-solid fa-shield-halved"></i></div>
+          <div class="role-label" style="color:#c4b5fd">Quản trị viên</div>
+          <div class="role-desc">Toàn quyền quản lý hệ thống</div>
+          <div class="role-action">Vào hệ thống →</div>
+        </button>
+
+      </div>
+    </div>
+
+    <!-- Footer -->
+    <p class="text-xs mt-6" style="color:rgba(253,230,138,0.3)">© 2026 Cục Công nghiệp địa phương — Bộ Công Thương. Hệ thống Khuyến Công v3.0</p>
+  </div>
+</div>
+
+<!-- ============================================================ -->
+<!-- MAIN APP (hidden until login) -->
+<!-- ============================================================ -->
+<div id="main-app" class="flex h-screen overflow-hidden" style="display:none">
+<aside class="sidebar w-64 flex flex-col shrink-0 overflow-y-auto">
+  <!-- Logo Gov -->
+  <div class="p-4 flex items-center gap-3" style="border-bottom:1px solid rgba(253,230,138,0.15)">
+    <div class="w-11 h-11 rounded-xl flex items-center justify-center shadow-lg shrink-0" style="background:linear-gradient(135deg,#b45309,#78350f)">
+      <i class="fa-solid fa-industry text-lg" style="color:#fef3c7"></i>
+    </div>
+    <div>
+      <div class="font-black text-xs leading-tight" style="color:#fef3c7">CỔNG THÔNG TIN</div>
+      <div class="text-[9px] font-black uppercase tracking-wider" style="color:rgba(253,230,138,0.6)">Khuyến Công Điện Tử</div>
+    </div>
+  </div>
+  <nav id="main-nav" class="flex-1 p-3 space-y-1 mt-2">
+    <div class="text-[9px] text-slate-500 font-black uppercase tracking-widest px-3 mb-2 mt-2">Hệ thống chính</div>
+    <div id="menu-dashboard" class="nav-item active" onclick="switchView('dashboard')"><i class="fa-solid fa-chart-pie w-5 mr-2.5 text-center"></i>Dashboard</div>
+    <div id="menu-projects"  class="nav-item" onclick="switchView('projects')"><i class="fa-solid fa-list-check w-5 mr-2.5 text-center"></i>Quản lý Đề án</div>
+    <div id="menu-funds"     class="nav-item" onclick="switchView('funds')"><i class="fa-solid fa-vault w-5 mr-2.5 text-center"></i>Giải ngân Kinh phí</div>
+    <div class="text-[9px] text-slate-500 font-black uppercase tracking-widest px-3 mb-2 mt-5">Cơ sở dữ liệu</div>
+    <div id="menu-companies" class="nav-item" onclick="switchView('companies')"><i class="fa-solid fa-shop w-5 mr-2.5 text-center"></i>Doanh nghiệp</div>
+    <div id="menu-ocop"      class="nav-item" onclick="switchView('ocop')"><i class="fa-solid fa-award w-5 mr-2.5 text-center"></i>Sản phẩm OCOP</div>
+    <div id="menu-kpi"       class="nav-item" onclick="switchView('kpi')"><i class="fa-solid fa-chart-line w-5 mr-2.5 text-center"></i>Chỉ tiêu KPI</div>
+  </nav>
+  <!-- Role panel -->
+  <div class="p-3 m-3 rounded-xl" id="role-panel" style="background:rgba(0,0,0,0.3);border:1px solid rgba(253,230,138,0.15)">
+    <div class="text-[9px] font-black uppercase tracking-widest mb-2" style="color:rgba(253,230,138,0.5)">🔐 Đăng nhập Demo</div>
+    <div class="space-y-1">
+      <button onclick="switchRole('CNNT')" id="rbtn-CNNT" class="w-full text-left px-3 py-2 rounded-lg text-xs font-bold transition-all text-slate-400 hover:bg-white/10"><i class="fa-solid fa-shop w-4 mr-2"></i>Cơ sở CNNT</button>
+      <button onclick="switchRole('TTKC')" id="rbtn-TTKC" class="w-full text-left px-3 py-2 rounded-lg text-xs font-bold transition-all text-slate-400 hover:bg-white/10"><i class="fa-solid fa-building-columns w-4 mr-2"></i>TT Khuyến công</button>
+      <button onclick="switchRole('SO')"   id="rbtn-SO"   class="w-full text-left px-3 py-2 rounded-lg text-xs font-bold transition-all text-slate-400 hover:bg-white/10"><i class="fa-solid fa-landmark w-4 mr-2"></i>Sở Công Thương</button>
+      <button onclick="switchRole('BO')"   id="rbtn-BO"   class="w-full text-left px-3 py-2 rounded-lg text-xs font-bold transition-all text-slate-400 hover:bg-white/10"><i class="fa-solid fa-flag w-4 mr-2"></i>Bộ / Cục CT</button>
+    </div>
+    <button id="btn-logout" onclick="logout()"><i class="fa-solid fa-right-from-bracket mr-2"></i>Đăng xuất / Đổi vai trò</button>
+  </div>
+</aside>
+<main class="flex-1 flex flex-col h-screen overflow-hidden">
+  <!-- Government Banner Header -->
+  <div class="gov-banner shrink-0" style="padding:0">
+    <div class="flex items-center justify-between px-6 py-3">
+      <div class="flex items-center gap-4">
+        <div class="w-10 h-10 rounded-full flex items-center justify-center shrink-0" style="background:rgba(255,255,255,0.15);border:2px solid rgba(253,230,138,0.4)">
+          <i class="fa-solid fa-star-of-life" style="color:#fde68a;font-size:1rem"></i>
+        </div>
+        <div>
+          <div class="text-[10px] font-bold uppercase tracking-widest" style="color:rgba(253,230,138,0.7)">Bộ Công Thương — Cục Công nghiệp địa phương</div>
+          <div class="font-black text-white" style="font-size:0.95rem;letter-spacing:0.01em">HỆ THỐNG QUẢN LÝ KHUYẾN CÔNG</div>
+        </div>
+      </div>
+      <div class="flex items-center gap-5">
+        <div class="flex items-center gap-2">
+          <i class="fa-solid fa-search" style="color:rgba(253,230,138,0.5)"></i>
+          <input type="text" placeholder="Tìm kiếm toàn hệ thống..." class="bg-transparent outline-none text-sm" style="color:rgba(255,255,255,0.85);width:220px" placeholder-style="color:rgba(253,230,138,0.4)"/>
+        </div>
+        <div style="width:1px;height:28px;background:rgba(253,230,138,0.2)"></div>
+        <button class="relative" style="color:rgba(253,230,138,0.7)" onmouseover="this.style.color='#fde68a'" onmouseout="this.style.color='rgba(253,230,138,0.7)'">
+          <i class="fa-solid fa-bell text-lg"></i>
+          <span class="absolute -top-1 -right-1 w-2 h-2 rounded-full" style="background:#ef4444;border:2px solid #7f1d1d"></span>
+        </button>
+        <div class="flex items-center gap-2 cursor-pointer">
+          <div class="text-right">
+            <div id="header-name" class="text-sm font-bold text-white">Cơ sở CNNT</div>
+            <div id="header-role" class="text-[10px] font-bold" style="color:#fde68a">CS CNNT · Đang hoạt động</div>
+          </div>
+          <div id="header-avatar" class="w-9 h-9 rounded-xl flex items-center justify-center text-white font-black text-sm" style="background:rgba(255,255,255,0.2);border:2px solid rgba(253,230,138,0.4)">
+            <i class="fa-solid fa-shop text-xs"></i>
+          </div>
+        </div>
+      </div>
+    </div>
+    <!-- Red accent bar -->
+    <div class="flex items-center px-6 gap-1" style="background:rgba(0,0,0,0.2);padding-top:6px;padding-bottom:6px;font-size:0.7rem">
+      <i class="fa-solid fa-house mr-2" style="color:rgba(253,230,138,0.6)"></i>
+      <span style="color:rgba(253,230,138,0.5)">Trang chủ</span>
+      <span style="color:rgba(253,230,138,0.3)"> / </span>
+      <span id="breadcrumb-view" style="color:rgba(253,230,138,0.85);font-weight:700">Tổng quan hệ thống</span>
+    </div>
+  </div>
+  <div class="flex-1 overflow-y-auto content-area">
+    <div id="view-dashboard" class="view-section active-view p-6 space-y-5">
+      <div id="role-banner" class="rounded-2xl p-4 flex items-start gap-4" style="display:none"></div>
+      <div id="dash-dynamic-content"></div>
+    </div>
+    <div id="view-projects" class="view-section p-6 space-y-5">
+      <div class="flex justify-between items-center"><div><h1 class="text-2xl font-black text-slate-900">Quản lý Đề án Khuyến công</h1><p id="proj-count" class="text-slate-500 text-sm mt-1">-- đề án</p></div><button id="btn-create-project" onclick="openModal('modal-create')" class="bg-brand text-white px-5 py-2.5 rounded-xl font-bold shadow-lg shadow-brand/20 hover:opacity-90 flex items-center gap-2"><i class="fa-solid fa-plus-circle"></i>TẠO ĐỀ ÁN MỚI</button></div>
+      <div class="panel overflow-hidden">
+        <div class="p-4 bg-slate-50 border-b border-slate-200 flex gap-3 flex-wrap">
+          <input id="proj-search" type="text" placeholder="Tìm tên, mã đề án..." class="border border-slate-200 rounded-lg px-3 py-2 text-sm outline-none focus:border-brand bg-white w-56" oninput="filterProjects()"/>
+          <select id="proj-status-filter" class="border border-slate-200 rounded-lg px-3 py-2 text-sm outline-none focus:border-brand bg-white" onchange="filterProjects()"><option value="-1">Tất cả trạng thái</option><option value="0">Khởi tạo</option><option value="1">Chờ duyệt</option><option value="2">Đang thực hiện</option><option value="3">Chờ nghiệm thu</option><option value="4">Hoàn thành</option></select>
+          <select id="proj-field-filter" class="border border-slate-200 rounded-lg px-3 py-2 text-sm outline-none focus:border-brand bg-white" onchange="filterProjects()"><option value="-1">Tất cả lĩnh vực</option><option value="0">Máy móc thiết bị</option><option value="1">Đào tạo nghề</option><option value="2">Phát triển OCOP</option><option value="3">Xúc tiến TM</option><option value="4">Tư vấn KH&CN</option></select>
+        </div>
+        <table class="w-full text-sm"><thead><tr class="text-[10px] text-slate-400 font-black uppercase bg-white border-b border-slate-100"><th class="px-5 py-3 text-left">Mã ĐA</th><th class="px-5 py-3 text-left">Tên & Phân loại</th><th class="px-5 py-3 text-left">Đơn vị thụ hưởng</th><th class="px-5 py-3 text-right">Kinh phí</th><th class="px-5 py-3 text-center">Trạng thái</th><th class="px-5 py-3 text-center">Hành động</th></tr></thead><tbody id="projects-tbody" class="divide-y divide-slate-50"></tbody></table>
+      </div>
+    </div>
+    <div id="view-funds" class="view-section p-6 space-y-5">
+      <h1 class="text-2xl font-black text-slate-900">Giải ngân & Quyết toán</h1>
+      <div class="grid grid-cols-3 gap-4">
+        <div class="panel p-5"><div class="text-[10px] text-slate-400 font-black uppercase mb-2">Tổng kế hoạch</div><div id="fund-total-budget" class="text-2xl font-black text-slate-900">--</div></div>
+        <div class="panel p-5"><div class="text-[10px] text-slate-400 font-black uppercase mb-2">Đã giải ngân</div><div id="fund-total-disbursed" class="text-2xl font-black text-emerald-600">--</div></div>
+        <div class="panel p-5"><div class="text-[10px] text-slate-400 font-black uppercase mb-2">Còn lại</div><div id="fund-remaining" class="text-2xl font-black text-amber-600">--</div></div>
+      </div>
+      <div class="panel overflow-hidden"><table class="w-full text-sm"><thead><tr class="text-[10px] text-slate-400 font-black uppercase bg-slate-50 border-b border-slate-200"><th class="px-5 py-3 text-left">Mã ĐA</th><th class="px-5 py-3 text-left">Tên Đề án</th><th class="px-5 py-3 text-right">KP Kế hoạch</th><th class="px-5 py-3 text-right">Đã giải ngân</th><th class="px-5 py-3">Tiến độ</th><th class="px-5 py-3 text-center">Trạng thái</th><th class="px-5 py-3 text-center">Thao tác</th></tr></thead><tbody id="funds-tbody" class="divide-y divide-slate-50"></tbody></table></div>
+      <div id="fund-charts-section" class="space-y-5"></div>
+    </div>
+    <div id="view-companies" class="view-section p-6 space-y-5">
+      <div><h1 class="text-2xl font-black text-slate-900">Doanh nghiệp Thụ hưởng</h1><p class="text-slate-500 text-sm mt-1">Click vào doanh nghiệp để xem các đề án liên quan</p></div>
+      <div id="companies-grid" class="grid grid-cols-4 gap-4"></div>
+    </div>
+    <div id="view-ocop" class="view-section p-6 space-y-5">
+      <h1 class="text-2xl font-black text-slate-900">Danh mục Sản phẩm OCOP</h1>
+      <div id="ocop-grid" class="grid grid-cols-3 gap-4"></div>
+    </div>
+    <div id="view-kpi" class="view-section p-6 space-y-5">
+      <h1 class="text-2xl font-black text-slate-900">Chỉ tiêu Khuyến công (KPI)</h1>
+      <div class="panel p-6 h-96"><canvas id="ch-kpi"></canvas></div>
+      <div class="grid grid-cols-4 gap-4">
+        <div class="panel p-5 text-center"><div class="text-3xl font-black text-brand mb-1">3,450</div><div class="text-xs text-slate-500 font-bold">Lao động được đào tạo</div></div>
+        <div class="panel p-5 text-center"><div class="text-3xl font-black text-emerald-600 mb-1">1,248</div><div class="text-xs text-slate-500 font-bold">Cơ sở được hỗ trợ</div></div>
+        <div class="panel p-5 text-center"><div class="text-3xl font-black text-amber-600 mb-1">140 Tỷ</div><div class="text-xs text-slate-500 font-bold">Kinh phí hỗ trợ 2024</div></div>
+        <div class="panel p-5 text-center"><div class="text-3xl font-black text-purple-600 mb-1">95%</div><div class="text-xs text-slate-500 font-bold">Tỷ lệ hoàn thành KPI</div></div>
+      </div>
+    </div>
+  </div>
+</main>
+<div id="modal-create" class="modal-bg hidden">
+  <div class="bg-white rounded-2xl shadow-2xl w-[860px] max-h-[92vh] flex flex-col overflow-hidden">
+    <div class="p-5 bg-brand flex justify-between items-center shrink-0"><h2 class="text-white font-black text-lg"><i class="fa-solid fa-folder-plus mr-2"></i>Lập hồ sơ Đề án Khuyến công</h2><button onclick="closeModal('modal-create')" class="text-white/60 hover:text-white text-xl"><i class="fa-solid fa-xmark"></i></button></div>
+    <form id="form-create" class="p-6 overflow-y-auto flex-1 space-y-5">
+
+      <!-- Nhóm 1: Thông tin cơ bản -->
+      <div class="bg-slate-50 rounded-xl p-4 border border-slate-100">
+        <div class="text-[9px] font-black text-brand uppercase tracking-widest mb-3">① Thông tin cơ bản</div>
+        <div class="grid grid-cols-1 gap-3">
+          <div><label class="text-[10px] font-black text-slate-500 uppercase block mb-1">Tên đề án (*)</label><input id="p_name" type="text" class="w-full border border-slate-200 rounded-lg p-2.5 text-slate-800 outline-none focus:border-brand bg-white font-bold text-sm" placeholder="Nhập tên đầy đủ của đề án..."/></div>
+        </div>
+        <div class="grid grid-cols-2 gap-3 mt-3">
+          <div><label class="text-[10px] font-black text-slate-500 uppercase block mb-1">Loại đề án (*)</label><select id="p_type" class="w-full border border-slate-200 rounded-lg p-2.5 text-slate-800 outline-none focus:border-brand bg-white text-sm"><option value="Địa phương">Khuyến công Địa phương</option><option value="Quốc gia - Điểm">Khuyến công Quốc gia - Điểm</option><option value="Quốc gia - Theo nhóm">Khuyến công Quốc gia - Theo nhóm</option><option value="Quốc gia - Đối tượng cụ thể">Khuyến công Quốc gia - Đối tượng cụ thể</option></select></div>
+          <div><label class="text-[10px] font-black text-slate-500 uppercase block mb-1">Lĩnh vực thực hiện (*)</label><select id="p_field" class="w-full border border-slate-200 rounded-lg p-2.5 text-slate-800 outline-none focus:border-brand bg-white text-sm"><option value="0">Đào tạo nghề, truyền nghề</option><option value="1">Hỗ trợ máy móc, công nghệ mới</option><option value="2">Phát triển SP CNNT tiêu biểu (OCOP)</option><option value="3">Xúc tiến thương mại, hội chợ</option><option value="4">Tư vấn KH&CN, sản xuất sạch hơn</option><option value="5">Liên doanh liên kết, cụm CN</option><option value="6">Hợp tác quốc tế về khuyến công</option><option value="7">Nâng cao năng lực quản lý KC</option></select></div>
+          <div><label class="text-[10px] font-black text-slate-500 uppercase block mb-1">Địa điểm thực hiện (*)</label><input id="p_location" type="text" class="w-full border border-slate-200 rounded-lg p-2.5 text-slate-800 outline-none focus:border-brand bg-white text-sm" placeholder="Xã/Phường, Quận/Huyện, Tỉnh/TP..."/></div>
+          <div><label class="text-[10px] font-black text-slate-500 uppercase block mb-1">Đơn vị thụ hưởng (*)</label><select id="p_company" class="w-full border border-slate-200 rounded-lg p-2.5 text-slate-800 outline-none focus:border-brand bg-white text-sm"></select></div>
+        </div>
+      </div>
+
+      <!-- Nhóm 2: Thời gian -->
+      <div class="bg-slate-50 rounded-xl p-4 border border-slate-100">
+        <div class="text-[9px] font-black text-brand uppercase tracking-widest mb-3">② Thời gian thực hiện</div>
+        <div class="grid grid-cols-3 gap-3">
+          <div><label class="text-[10px] font-black text-slate-500 uppercase block mb-1">Ngày bắt đầu (*)</label><input id="p_start" type="date" class="w-full border border-slate-200 rounded-lg p-2.5 text-slate-800 outline-none focus:border-brand bg-white text-sm"/></div>
+          <div><label class="text-[10px] font-black text-slate-500 uppercase block mb-1">Ngày kết thúc (*)</label><input id="p_end" type="date" class="w-full border border-slate-200 rounded-lg p-2.5 text-slate-800 outline-none focus:border-brand bg-white text-sm"/></div>
+          <div><label class="text-[10px] font-black text-slate-500 uppercase block mb-1">Thời gian nghiệm thu (*)</label><input id="p_acceptance" type="date" class="w-full border border-slate-200 rounded-lg p-2.5 text-slate-800 outline-none focus:border-brand bg-white text-sm"/></div>
+        </div>
+      </div>
+
+      <!-- Nhóm 3: Kinh phí -->
+      <div class="bg-slate-50 rounded-xl p-4 border border-slate-100">
+        <div class="text-[9px] font-black text-brand uppercase tracking-widest mb-3">③ Kinh phí</div>
+        <div class="grid grid-cols-3 gap-3">
+          <div><label class="text-[10px] font-black text-slate-500 uppercase block mb-1">Kinh phí dự kiến (VNĐ) (*)</label><input id="p_budget" type="number" class="w-full border border-slate-200 rounded-lg p-2.5 text-slate-800 font-mono font-black outline-none focus:border-brand bg-white text-sm" placeholder="0"/></div>
+          <div><label class="text-[10px] font-black text-slate-500 uppercase block mb-1">Kinh phí thực hiện (VNĐ)</label><input id="p_actual" type="number" class="w-full border border-slate-200 rounded-lg p-2.5 text-slate-800 font-mono outline-none focus:border-brand bg-white text-sm" placeholder="Điền sau khi thực hiện"/></div>
+          <div><label class="text-[10px] font-black text-slate-500 uppercase block mb-1">Nguồn kinh phí (*)</label><select id="p_source" class="w-full border border-slate-200 rounded-lg p-2.5 text-slate-800 outline-none focus:border-brand bg-white text-sm"><option>Ngân sách Trung ương</option><option>Ngân sách Địa phương</option><option>Vốn đối ứng doanh nghiệp</option><option>Nguồn hỗn hợp</option></select></div>
+        </div>
+      </div>
+
+      <!-- Nhóm 4: Các đơn vị liên quan -->
+      <div class="bg-slate-50 rounded-xl p-4 border border-slate-100">
+        <div class="text-[9px] font-black text-brand uppercase tracking-widest mb-3">④ Các đơn vị liên quan</div>
+        <div class="grid grid-cols-2 gap-3">
+          <div><label class="text-[10px] font-black text-slate-500 uppercase block mb-1">Đơn vị thi công (*)</label><input id="p_contractor" type="text" class="w-full border border-slate-200 rounded-lg p-2.5 text-slate-800 outline-none focus:border-brand bg-white text-sm" placeholder="Tên đơn vị thi công đề án..."/></div>
+          <div><label class="text-[10px] font-black text-slate-500 uppercase block mb-1">Đơn vị giám sát (*)</label><input id="p_supervisor" type="text" class="w-full border border-slate-200 rounded-lg p-2.5 text-slate-800 outline-none focus:border-brand bg-white text-sm" placeholder="Tên đơn vị giám sát..."/></div>
+          <div><label class="text-[10px] font-black text-slate-500 uppercase block mb-1">Thời gian giám sát/kiểm tra</label><input id="p_supervision_date" type="date" class="w-full border border-slate-200 rounded-lg p-2.5 text-slate-800 outline-none focus:border-brand bg-white text-sm"/></div>
+          <div><label class="text-[10px] font-black text-slate-500 uppercase block mb-1">Biên bản giám sát (File đính kèm)</label><input id="p_report_file" type="file" accept=".pdf,.doc,.docx" class="w-full border border-slate-200 rounded-lg p-2 text-slate-600 outline-none focus:border-brand bg-white text-xs"/></div>
+        </div>
+      </div>
+
+    </form>
+    <div class="p-5 bg-slate-50 border-t border-slate-200 flex justify-between items-center shrink-0">
+      <span class="text-[10px] text-slate-400 font-bold">(*) Trường bắt buộc · Hồ sơ lưu theo quy trình TT28</span>
+      <div class="flex gap-3"><button onclick="closeModal('modal-create')" class="px-5 py-2.5 font-bold text-slate-500 hover:text-slate-800">Hủy</button><button onclick="submitProject()" class="bg-brand text-white px-8 py-2.5 rounded-xl font-black shadow-lg hover:opacity-90"><i class="fa-solid fa-save mr-2"></i>LƯU HỒ SƠ</button></div>
+    </div>
+  </div>
+</div>
+<div id="modal-detail" class="modal-bg hidden">
+  <div class="bg-white rounded-2xl shadow-2xl w-[750px] max-h-[90vh] flex flex-col overflow-hidden">
+    <div class="p-5 bg-slate-900 flex justify-between items-center shrink-0"><h2 id="detail-title" class="text-white font-black text-base truncate pr-4">Chi tiết Đề án</h2><button onclick="closeModal('modal-detail')" class="text-white/60 hover:text-white text-xl shrink-0"><i class="fa-solid fa-xmark"></i></button></div>
+    <div class="px-6 py-5 bg-slate-50 border-b border-slate-200 shrink-0" id="detail-steps"></div>
+    <div id="detail-content" class="p-6 overflow-y-auto flex-1"></div>
+  </div>
+</div>
+<div id="modal-disbursal" class="modal-bg hidden">
+  <div class="bg-white rounded-3xl shadow-2xl w-[480px] overflow-hidden">
+    <div class="p-6 bg-emerald-600"><h2 class="text-white font-black text-lg"><i class="fa-solid fa-file-invoice-dollar mr-2"></i>Thực hiện Quyết toán</h2><p id="dis-project-name" class="text-emerald-100 text-sm mt-1 truncate">--</p></div>
+    <div class="p-6 space-y-4">
+      <div class="grid grid-cols-3 gap-3">
+        <div class="bg-blue-50 rounded-xl p-3"><div class="text-[10px] text-blue-400 font-black uppercase mb-1">Kế hoạch</div><div id="dis-budget" class="font-black text-blue-800 text-sm">--</div></div>
+        <div class="bg-amber-50 rounded-xl p-3"><div class="text-[10px] text-amber-500 font-black uppercase mb-1">Đã Tạm ứng</div><div id="dis-advance" class="font-black text-amber-600 text-sm">--</div></div>
+        <div class="bg-emerald-50 rounded-xl p-3"><div class="text-[10px] text-emerald-400 font-black uppercase mb-1">Đã Quyết toán</div><div id="dis-settle" class="font-black text-emerald-800 text-sm">--</div></div>
+      </div>
+      <div class="bg-amber-50 border border-amber-200 rounded-xl p-3"><div class="text-[10px] text-amber-600 font-black uppercase mb-1">Định mức tối đa (TT28)</div><div id="dis-max" class="font-black text-amber-800 text-sm">150,000,000 VNĐ</div></div>
+      <div>
+        <label class="text-[10px] font-black text-slate-400 uppercase block mb-2">Loại giải ngân</label>
+        <select id="dis-type" class="w-full border-2 border-slate-200 rounded-xl p-3 text-sm font-bold text-slate-700 outline-none focus:border-brand mb-3">
+          <option value="advance">Kinh phí Tạm ứng (Tối đa 50% hoặc 70%)</option>
+          <option value="settle">Kinh phí Quyết toán</option>
+        </select>
+        <label class="text-[10px] font-black text-slate-400 uppercase block mb-2">Số tiền giải ngân (VNĐ)</label>
+        <input id="dis-amount" type="number" class="w-full border-2 border-slate-200 rounded-xl p-4 text-center text-2xl font-black outline-none focus:border-brand transition-colors" placeholder="0" oninput="checkDisLimit(this.value)"/>
+        <p id="dis-error" class="hidden text-rose-600 text-xs font-bold mt-2 bg-rose-50 p-2 rounded-lg"><i class="fa-solid fa-triangle-exclamation mr-1"></i>Vượt hạn mức hoặc số tiền vượt quá phần còn lại!</p>
+      </div>
+    </div>
+    <div class="px-6 pb-6 flex gap-3"><button onclick="closeModal('modal-disbursal')" class="flex-1 py-3 bg-slate-100 text-slate-600 rounded-xl font-bold hover:bg-slate-200">Hủy</button><button id="dis-btn-submit" class="flex-1 py-3 bg-emerald-600 text-white rounded-xl font-black hover:bg-emerald-700 shadow-lg">XÁC NHẬN CHI</button></div>
+  </div>
+</div>
+</div><!-- end #main-app -->
+<style>
+@keyframes loginFadeOut{to{opacity:0;transform:scale(1.04)}}
+@keyframes appFadeIn{from{opacity:0}to{opacity:1}}
+.login-role-card{display:flex;flex-direction:column;align-items:center;text-align:center;padding:1.25rem 0.75rem;border-radius:1rem;cursor:pointer;background:rgba(255,255,255,0.05);border:1px solid rgba(253,230,138,0.15);transition:all 0.25s;color:#fff;}
+.login-role-card:hover{background:rgba(255,255,255,0.1);border-color:rgba(253,230,138,0.4);transform:translateY(-5px) scale(1.03);box-shadow:0 16px 40px rgba(0,0,0,0.5);}
+.login-role-admin{border:1px solid rgba(196,181,253,0.3);}
+.login-role-admin:hover{box-shadow:0 16px 40px rgba(124,58,237,0.45);}
+.role-icon{width:3rem;height:3rem;border-radius:0.875rem;display:flex;align-items:center;justify-content:center;font-size:1.25rem;color:#fff;margin-bottom:0.75rem;box-shadow:0 4px 16px rgba(0,0,0,0.3);}
+.role-label{font-weight:900;font-size:0.8rem;color:#fff;margin-bottom:0.25rem}
+.role-desc{font-size:0.65rem;color:rgba(253,230,138,0.45);line-height:1.45;margin-bottom:0.75rem;flex:1}
+.role-action{font-size:0.65rem;font-weight:800;color:rgba(253,230,138,0.45);transition:all 0.2s}
+.login-role-card:hover .role-action{color:#fde68a}
+#btn-logout{margin-top:1rem;width:100%;background:rgba(50,0,0,0.5);color:rgba(253,230,138,0.7);border:1px solid rgba(253,230,138,0.15);border-radius:0.5rem;padding:0.5rem;font-size:0.7rem;font-weight:700;cursor:pointer;transition:all 0.2s;display:none;}
+#btn-logout:hover{background:rgba(100,0,0,0.85);color:#fde68a}
+</style>
+
+<script src="app-data.js"></script>
+<script src="app-logic.js"></script>
+</body></html>
