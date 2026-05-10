@@ -18,7 +18,7 @@ function switchRole(roleId) {
   // Cập nhật header
   document.getElementById('header-name').textContent = role.name;
   document.getElementById('header-role').textContent = role.short + ' · Đang hoạt động';
-  document.getElementById('header-role').style.color = role.color;
+  document.getElementById('header-role').style.color = role.color === '#fde68a' ? '#64748B' : role.color;
   const av = document.getElementById('header-avatar');
   av.style.background = role.color;
   av.innerHTML = `<i class="fa-solid ${role.icon} text-xs"></i>`;
@@ -608,17 +608,58 @@ function renderProjects() {
 function roleAction(pid, nextStatus, label) {
   const p = AppData.projects.find(x => x.id === pid);
   const oldLabel = STATUS[p.status].label;
+  
   if (nextStatus === 0 && p.status !== 0) {
-    // Yêu cầu xác nhận từ chối
-    if (!confirm(`Từ chối đề án "${p.name}"?\nHồ sơ sẽ được trả về trạng thái "Khởi tạo" để Cơ sở bổ sung.`)) return;
-    showToast(`Đã từ chối hồ sơ ${pid}. Yêu cầu bổ sung hồ sơ.`, 'error');
+    showConfirm(
+      `Từ chối đề án "${p.name}"?`,
+      `Hồ sơ sẽ được trả về trạng thái "Khởi tạo" để Cơ sở bổ sung thông tin theo yêu cầu. Bạn có chắc chắn?`,
+      () => {
+        showToast(`Đã từ chối hồ sơ ${pid}. Yêu cầu bổ sung hồ sơ.`, 'error');
+        p.status = nextStatus;
+        renderProjects();
+        if (State.view === 'dashboard') renderDashboard();
+      }
+    );
   } else {
     showToast(`Đề án ${pid}: ${oldLabel} → ${STATUS[nextStatus].label}`);
+    p.status = nextStatus;
+    if (nextStatus === 10 && (p.disbursedAdvance + p.disbursedSettle) === 0) p.disbursedSettle = Math.round(p.budget * 0.95);
+    renderProjects();
+    if (State.view === 'dashboard') renderDashboard();
   }
-  p.status = nextStatus;
-  if (nextStatus === 10 && (p.disbursedAdvance + p.disbursedSettle) === 0) p.disbursedSettle = Math.round(p.budget * 0.95);
-  renderProjects();
-  if (State.view === 'dashboard') renderDashboard();
+}
+
+function showConfirm(title, msg, onConfirm) {
+  const modal = document.getElementById('modal-confirm');
+  const panel = modal.querySelector('.panel');
+  document.getElementById('confirm-title').textContent = title;
+  document.getElementById('confirm-msg').textContent = msg;
+  
+  modal.classList.remove('hidden', 'pointer-events-none');
+  setTimeout(() => {
+    modal.classList.add('opacity-100');
+    panel.classList.remove('scale-90');
+    panel.classList.add('scale-100');
+  }, 10);
+  
+  const okBtn = document.getElementById('confirm-ok');
+  const cancelBtn = document.getElementById('confirm-cancel');
+  
+  const close = () => {
+    modal.classList.remove('opacity-100');
+    panel.classList.remove('scale-100');
+    panel.classList.add('scale-90');
+    setTimeout(() => {
+      modal.classList.add('hidden', 'pointer-events-none');
+    }, 300);
+  };
+  
+  okBtn.onclick = () => {
+    onConfirm();
+    close();
+  };
+  
+  cancelBtn.onclick = close;
 }
 
 function filterProjects() {
@@ -1230,25 +1271,15 @@ function renderDashAdmin() {
           <span class="text-[10px] font-black px-2 py-1 bg-rose-100 text-rose-600 rounded">ĐIỂM XTTM</span>
         </div>
       </div>
-      <div class="relative w-full h-[400px] bg-slate-100 rounded-2xl overflow-hidden border border-slate-200">
-        <img src="anh3.jpg" class="w-full h-full object-cover opacity-30 grayscale" style="filter: brightness(0.8) contrast(1.2)"/>
-        <!-- Fake Map Markers -->
-        <div class="absolute top-[20%] left-[45%] w-4 h-4 bg-blue-600 rounded-full border-2 border-white animate-bounce shadow-lg"></div>
-        <div class="absolute top-[35%] left-[55%] w-3 h-3 bg-amber-500 rounded-full border-2 border-white shadow-md"></div>
-        <div class="absolute top-[60%] left-[48%] w-5 h-5 bg-rose-500 rounded-full border-2 border-white shadow-lg animate-pulse"></div>
-        <div class="absolute top-[15%] left-[42%] w-3 h-3 bg-blue-600 rounded-full border-2 border-white shadow-md"></div>
-        <div class="absolute top-[80%] left-[52%] w-4 h-4 bg-emerald-500 rounded-full border-2 border-white shadow-md"></div>
-        <!-- Map Sidebar -->
-        <div class="absolute bottom-4 left-4 p-3 bg-white/90 backdrop-blur rounded-xl border border-white shadow-xl max-w-[200px]">
-          <div class="text-[10px] font-black text-slate-400 mb-2 uppercase">Thống kê theo vùng</div>
-          <div class="space-y-1">
-             <div class="flex justify-between text-[10px] font-bold"><span>Miền Bắc:</span><span class="text-blue-600">42 cơ sở</span></div>
-             <div class="flex justify-between text-[10px] font-bold"><span>Miền Trung:</span><span class="text-amber-600">28 cơ sở</span></div>
-             <div class="flex justify-between text-[10px] font-bold"><span>Miền Nam:</span><span class="text-rose-600">50 cơ sở</span></div>
-          </div>
-        </div>
+      <div id="map-real" class="w-full h-[450px] bg-slate-100 rounded-2xl overflow-hidden border border-slate-200 shadow-inner">
+        <!-- Leaflet Map will be injected here -->
       </div>
     </div>
+    <script>
+      // Đợi một chút để DOM ổn định rồi mới khởi tạo bản đồ
+      setTimeout(() => initDashboardMap(), 100);
+    </script>
+
 
     <div class="grid grid-cols-4 gap-4">
       ${kpiCard('Tổng đề án', total, 'Toàn quốc', '#7c3aed')}
@@ -1276,6 +1307,7 @@ function renderDashAdmin() {
         <div><div class="font-black text-slate-800 text-sm">Cấu hình Hệ thống</div><div class="text-xs text-slate-400">Phân quyền & tham số</div></div>
       </div>
     </div>
+
 
     <!-- Biểu đồ 1 & 10 -->
     <div class="grid grid-cols-3 gap-5 mb-5">
@@ -1362,7 +1394,11 @@ function renderDashAdmin() {
       }).join('')}
       </tbody></table>
     </div>`;
+
+  // Khởi tạo bản đồ sau khi gán innerHTML
+  setTimeout(() => initDashboardMap(), 200);
 }
+
 
 
 // ---- KHỞI TẠO ----
@@ -1514,3 +1550,42 @@ function renderDocuments() {
       </div>
     </div>`;
 }
+
+function initDashboardMap() {
+  const container = document.getElementById('map-real');
+  if (!container || container._leaflet_id) return; 
+
+  const map = L.map('map-real', {
+    center: [16.4637, 107.5909],
+    zoom: 6,
+    zoomControl: false,
+    attributionControl: false
+  });
+
+  L.tileLayer('https://{s}.basemaps.cartocdn.com/rastertiles/voyager/{z}/{x}/{y}{r}.png', {
+    maxZoom: 19
+  }).addTo(map);
+
+  const markers = [
+    { pos: [21.0285, 105.8542], label: 'Cơ sở CNNT Hà Nội', type: 'cnnt' },
+    { pos: [16.0544, 108.2022], label: 'TTKC Đà Nẵng', type: 'ttkc' },
+    { pos: [10.8231, 106.6297], label: 'Cơ sở CNNT TP.HCM', type: 'cnnt' },
+    { pos: [12.2458, 109.1943], label: 'Sản phẩm OCOP Khánh Hòa', type: 'ocop' }
+  ];
+
+  markers.forEach(m => {
+    const color = m.type === 'cnnt' ? '#2563eb' : (m.type === 'ttkc' ? '#0891b2' : '#f59e0b');
+    const circle = L.circleMarker(m.pos, {
+      radius: 8,
+      fillColor: color,
+      color: "#fff",
+      weight: 2,
+      opacity: 1,
+      fillOpacity: 0.8
+    }).addTo(map);
+    circle.bindPopup(`<b>${m.label}</b><br>Trạng thái: Đang hoạt động`);
+  });
+
+  setTimeout(() => map.invalidateSize(), 200);
+}
+

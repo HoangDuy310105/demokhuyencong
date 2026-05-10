@@ -2,17 +2,17 @@
 // APP DATA - Mock Data Engine cho Prototype v4.0 (Full Requirements)
 // =====================================================
 const STATUS = {
-  0:  { label: '0. Đăng ký cơ sở',     cls: 'bg-slate-100 text-slate-600 border-slate-300',   step: 0 },
-  1:  { label: '1. Thẩm định cơ sở',   cls: 'bg-amber-100 text-amber-700 border-amber-300',   step: 1 },
-  2:  { label: '2. Thẩm định cấp Bộ',  cls: 'bg-orange-100 text-orange-700 border-orange-300', step: 2 },
-  3:  { label: '3. Phê duyệt KH',      cls: 'bg-red-100 text-red-700 border-red-300',         step: 3 },
-  4:  { label: '4. Giao Kế hoạch',     cls: 'bg-cyan-100 text-cyan-700 border-cyan-300',      step: 4 },
-  5:  { label: '5. Ký hợp đồng',       cls: 'bg-indigo-100 text-indigo-700 border-indigo-300',step: 5 },
-  6:  { label: '6. Đang thực hiện',    cls: 'bg-blue-100 text-blue-700 border-blue-300',      step: 6 },
-  7:  { label: '7. Kiểm tra giám sát', cls: 'bg-fuchsia-100 text-fuchsia-700 border-fuchsia-300', step: 7 },
-  8:  { label: '8. Báo cáo kết quả',   cls: 'bg-purple-100 text-purple-700 border-purple-300', step: 8 },
-  9:  { label: '9. Thanh lý Quyết toán', cls: 'bg-teal-100 text-teal-700 border-teal-300',    step: 9 },
-  10: { label: '10. Hoàn tất',         cls: 'bg-emerald-100 text-emerald-700 border-emerald-300', step: 10 },
+  0:  { label: '0. Đăng ký cơ sở',     cls: 'bg-slate-100 text-slate-600 border-slate-200',   step: 0 },
+  1:  { label: '1. Thẩm định cơ sở',   cls: 'bg-indigo-50 text-indigo-700 border-indigo-100',   step: 1 },
+  2:  { label: '2. Thẩm định cấp Bộ',  cls: 'bg-indigo-100 text-indigo-800 border-indigo-200', step: 2 },
+  3:  { label: '3. Phê duyệt KH',      cls: 'bg-blue-50 text-blue-700 border-blue-100',         step: 3 },
+  4:  { label: '4. Giao Kế hoạch',     cls: 'bg-blue-100 text-blue-800 border-blue-200',      step: 4 },
+  5:  { label: '5. Ký hợp đồng',       cls: 'bg-sky-50 text-sky-700 border-sky-100',          step: 5 },
+  6:  { label: '6. Đang thực hiện',    cls: 'bg-emerald-50 text-emerald-700 border-emerald-100', step: 6 },
+  7:  { label: '7. Kiểm tra giám sát', cls: 'bg-emerald-100 text-emerald-800 border-emerald-200', step: 7 },
+  8:  { label: '8. Báo cáo kết quả',   cls: 'bg-teal-50 text-teal-700 border-teal-100',      step: 8 },
+  9:  { label: '9. Thanh lý Quyết toán', cls: 'bg-teal-100 text-teal-800 border-teal-200',    step: 9 },
+  10: { label: '10. Hoàn tất',         cls: 'bg-emerald-600 text-white border-transparent',   step: 10 },
 };
 
 // Role definitions — màu, tên, quyền chuyển trạng thái, menu riêng
@@ -58,9 +58,9 @@ const ROLES = {
     ],
     rejectFrom: [1],
     actions: {
-      1: { label:'✓ Thẩm định Sở → Trình Bộ', nextStatus:2, cls:'bg-orange-500 text-white' },
-      7: { label:'✓ Xác nhận Kiểm tra',  nextStatus:8, cls:'bg-purple-600 text-white' },
-      8: { label:'Duyệt Báo cáo Sở', nextStatus:9, cls:'bg-teal-500 text-white' }
+      1: { label:'✓ Thẩm định Sở → Trình Bộ', nextStatus:2, cls:'bg-indigo-600 text-white' },
+      7: { label:'✓ Xác nhận Kiểm tra',  nextStatus:8, cls:'bg-emerald-600 text-white' },
+      8: { label:'Duyệt Báo cáo Sở', nextStatus:9, cls:'bg-teal-600 text-white' }
     }
   },
   BO: {
@@ -77,11 +77,11 @@ const ROLES = {
       { view:'ocop',       icon:'fa-award',          label:'Sản phẩm OCOP' },
     ],
     actions: {
-      2: { label:'✓ Thẩm định Bộ',   nextStatus:3, cls:'bg-red-500 text-white' },
+      2: { label:'✓ Thẩm định Bộ',   nextStatus:3, cls:'bg-indigo-600 text-white' },
       3: { label:'✓ Phê duyệt Kế hoạch', nextStatus:4, cls:'bg-blue-600 text-white' },
-      4: { label:'Thông báo & Giao KH', nextStatus:5, cls:'bg-cyan-600 text-white' },
-      5: { label:'Ký hợp đồng / Giao NV', nextStatus:6, cls:'bg-indigo-600 text-white' },
-      9: { label:'✓ Quyết toán & Hoàn tất', nextStatus:10, cls:'bg-emerald-600 text-white' },
+      4: { label:'Thông báo & Giao KH', nextStatus:5, cls:'bg-sky-600 text-white' },
+      5: { label:'Ký hợp đồng / Giao NV', nextStatus:6, cls:'bg-emerald-600 text-white' },
+      9: { label:'✓ Quyết toán & Hoàn tất', nextStatus:10, cls:'bg-teal-600 text-white' },
     }
   },
   ADMIN: {
@@ -102,16 +102,16 @@ const ROLES = {
       { view:'settings',  icon:'fa-gear',            label:'Cấu hình Hệ thống' },
     ],
     actions: {
-      0:{label:'Nộp Sở',nextStatus:1,cls:'bg-amber-500 text-white'},
-      1:{label:'Thẩm định Sở',nextStatus:2,cls:'bg-orange-500 text-white'},
-      2:{label:'Thẩm định Bộ',nextStatus:3,cls:'bg-red-500 text-white'},
+      0:{label:'Nộp Sở',nextStatus:1,cls:'bg-slate-800 text-white'},
+      1:{label:'Thẩm định Sở',nextStatus:2,cls:'bg-indigo-600 text-white'},
+      2:{label:'Thẩm định Bộ',nextStatus:3,cls:'bg-indigo-700 text-white'},
       3:{label:'Phê duyệt KH',nextStatus:4,cls:'bg-blue-600 text-white'},
       4:{label:'Giao KH',nextStatus:5,cls:'bg-cyan-600 text-white'},
-      5:{label:'Ký hợp đồng',nextStatus:6,cls:'bg-indigo-600 text-white'},
-      6:{label:'Đang TH',nextStatus:7,cls:'bg-fuchsia-600 text-white'},
-      7:{label:'Kiểm tra',nextStatus:8,cls:'bg-purple-600 text-white'},
+      5:{label:'Ký hợp đồng',nextStatus:6,cls:'bg-sky-600 text-white'},
+      6:{label:'Đang TH',nextStatus:7,cls:'bg-emerald-600 text-white'},
+      7:{label:'Kiểm tra',nextStatus:8,cls:'bg-emerald-700 text-white'},
       8:{label:'Báo cáo',nextStatus:9,cls:'bg-teal-600 text-white'},
-      9:{label:'Quyết toán',nextStatus:10,cls:'bg-emerald-600 text-white'},
+      9:{label:'Quyết toán',nextStatus:10,cls:'bg-teal-700 text-white'},
     },
     rejectFrom:[1,2,3],
   }
@@ -200,8 +200,8 @@ function formatVND(n) {
   return n.toLocaleString('vi-VN');
 }
 function statusBadge(s) {
-  const st = STATUS[s] || {label: 'Không xác định', cls: 'bg-gray-100 text-gray-600'};
-  return `<span class="px-2.5 py-1 rounded-full text-[10px] sm:text-xs font-bold border ${st.cls}">${st.label}</span>`;
+  const st = STATUS[s] || {label: 'Không xác định', cls: 'bg-gray-100 text-gray-600 border-gray-200'};
+  return `<span class="inline-block px-2 py-1 rounded-lg text-[10px] font-black border text-center" style="min-width:130px; ${st.cls.includes('bg-emerald-600') ? '' : 'box-shadow: 0 1px 2px rgba(0,0,0,0.05)'} " class="${st.cls}">${st.label}</span>`;
 }
 function fieldName(idx) { return FIELDS[idx] || 'Khác'; }
 function getCompany(id) { return AppData.companies.find(c => c.id === id) || {}; }

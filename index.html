@@ -1,14 +1,14 @@
-<!DOCTYPE html><html lang="vi"><head><meta charset="utf-8"/><meta name="viewport" content="width=device-width,initial-scale=1"/><title>Cổng Thông tin Khuyến Công Điện tử</title><script src="https://cdn.tailwindcss.com"></script><script src="https://cdn.jsdelivr.net/npm/chart.js"></script><link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css"><style>@import url('https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap');*{font-family:'Plus Jakarta Sans',sans-serif}
-/* ===== SIDEBAR — Trống Đồng Theme ===== */
-.sidebar{background:#8b0000;background-image:url('images/anh3.jpg');background-size:cover;background-position:center;position:relative;overflow:hidden}.sidebar::before{content:'';position:absolute;inset:0;background:linear-gradient(160deg,rgba(120,0,0,0.4) 0%,rgba(50,0,0,0.6) 100%);z-index:0}.sidebar>*{position:relative;z-index:1}
-/* NAV ITEMS — gold text on red */
-.nav-item{color:rgba(253,230,138,0.65);border-radius:.5rem;padding:.75rem 1rem;display:flex;align-items:center;cursor:pointer;transition:all .2s;font-size:.8rem}.nav-item.active{background:linear-gradient(135deg,rgba(202,138,4,0.55),rgba(120,53,15,0.7));color:#fef3c7;font-weight:700;box-shadow:0 4px 15px rgba(0,0,0,0.4);border:1px solid rgba(253,230,138,0.25)}.nav-item:hover:not(.active){background:rgba(253,230,138,0.1);color:#fde68a}
+<!DOCTYPE html><html lang="vi"><head><meta charset="utf-8"/><meta name="viewport" content="width=device-width,initial-scale=1"/><title>Cổng Thông tin Khuyến Công Điện tử</title><script src="https://cdn.tailwindcss.com"></script><script src="https://cdn.jsdelivr.net/npm/chart.js"></script><link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css"><link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" integrity="sha256-p4NxAoJBhIIN+hmNHrzRCf9tD/miZyoHS5obTRR9BMY=" crossorigin=""/><script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js" integrity="sha256-20nQCchB9co0qIjJZRGuk2/Z9VM+kNiyxNV1lvTlZBo=" crossorigin=""></script><style>@import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap');*{font-family:'Inter',sans-serif}
+/* ===== SIDEBAR ===== */
+.sidebar{background:#0F172A;border-right:1px solid #1E293B;position:relative;overflow:hidden}.sidebar>*{position:relative;z-index:1}
+/* NAV ITEMS */
+.nav-item{color:#94a3b8;border-radius:.5rem;padding:.75rem 1rem;display:flex;align-items:center;cursor:pointer;transition:all .25s ease;font-size:14px;font-weight:500;margin-bottom:2px}.nav-item.active{background:linear-gradient(135deg,rgba(59,130,246,0.15) 0%,rgba(79,70,229,0.2) 100%);color:#6366f1;font-weight:700;box-shadow:inset 3px 0 0 #6366f1;border:1px solid rgba(99,102,241,0.1)}.nav-item:hover:not(.active){background:rgba(30,41,59,0.6);color:#e2e8f0;transform:translateX(2px)}
 /* ===== GOVERNMENT HEADER ===== */
-.gov-banner{background:linear-gradient(135deg,#b91c1c 0%,#7f1d1d 100%);border-bottom:3px solid #b45309;position:relative;overflow:hidden}.gov-banner::after{content:'';position:absolute;right:0;top:0;bottom:0;width:340px;background:url('images/bg-crane.png') no-repeat right center;background-size:contain;opacity:0.12;pointer-events:none}
+.gov-banner{background:#ffffff;border-bottom:1px solid #e2e8f0;position:relative;overflow:hidden;box-shadow:0 1px 15px rgba(0,0,0,0.03)}
 /* ===== CONTENT WATERMARK ===== */
-.content-area{background-color:#f5f3f0;position:relative}.content-area::before{content:'';position:fixed;right:-2%;bottom:-5%;width:55%;aspect-ratio:16/9;background:url('images/bg-crane.png') no-repeat right bottom;background-size:contain;opacity:0.04;z-index:0;pointer-events:none}
+.content-area{background-color:#f5f3f0;position:relative}
 /* PANELS & CARDS */
-.panel{background:rgba(255,255,255,0.97);border:1px solid #e7e0d6;border-radius:.75rem;box-shadow:0 1px 4px rgba(139,0,0,0.06);position:relative;z-index:1}.action-btn{background:#eff6ff;color:#2563eb;border:1px solid #bfdbfe;padding:.35rem .85rem;border-radius:.5rem;font-size:.7rem;font-weight:700;cursor:pointer;transition:all .2s}.action-btn:hover{background:#2563eb;color:#fff}.btn-sm{padding:.5rem 1.25rem;border-radius:.5rem;font-size:.8rem;font-weight:700;cursor:pointer}.view-section{display:none}.view-section.active-view{display:block}.ctx-menu{position:fixed;background:#fff;border:1px solid #e2e8f0;border-radius:.75rem;box-shadow:0 10px 30px rgba(0,0,0,.15);z-index:999;min-width:160px;overflow:hidden}.ctx-item{padding:.65rem 1rem;font-size:.8rem;font-weight:600;cursor:pointer;color:#374151}.ctx-item:hover{background:#fef3c7;color:#92400e}.ctx-item.active{color:#92400e;background:#fef3c7}.modal-bg{background:rgba(50,0,0,0.55);backdrop-filter:blur(6px);position:fixed;inset:0;z-index:50;display:flex;align-items:center;justify-content:center}@keyframes fadeIn{from{opacity:0;transform:translateY(8px)}to{opacity:1;transform:translateY(0)}}.fade-in{animation:fadeIn .25s ease}@keyframes toastIn{from{opacity:0;transform:translateY(20px)}to{opacity:1;transform:translateY(0)}}.toast-enter{animation:toastIn .3s ease}@keyframes toastOut{to{opacity:0;transform:translateY(10px)}}.toast-exit{animation:toastOut .3s ease forwards}::-webkit-scrollbar{width:5px;height:5px}::-webkit-scrollbar-thumb{background:#d4c4a0;border-radius:10px}::-webkit-scrollbar-thumb:hover{background:#b45309}</style><script>tailwind.config={theme:{extend:{colors:{brand:'#b45309',dark:'#7f1d1d'}}}}</script></head>
+.panel{background:rgba(255,255,255,0.97);border:1px solid #e7e0d6;border-radius:.75rem;box-shadow:0 1px 4px rgba(139,0,0,0.06);position:relative;z-index:1}.action-btn{min-width:120px;text-align:center;padding:.45rem .75rem;border-radius:.75rem;font-size:.7rem;font-weight:700;cursor:pointer;transition:all .25s cubic-bezier(0.4,0,0.2,1);border:none;box-shadow:0 4px 12px rgba(0,0,0,0.1)}.action-btn:hover{transform:translateY(-2px);box-shadow:0 6px 15px rgba(0,0,0,0.15);filter:brightness(1.1)}.btn-sm{padding:.5rem 1.25rem;border-radius:.5rem;font-size:.8rem;font-weight:700;cursor:pointer}.view-section{display:none}.view-section.active-view{display:block}.ctx-menu{position:fixed;background:#fff;border:1px solid #e2e8f0;border-radius:.75rem;box-shadow:0 10px 30px rgba(0,0,0,.15);z-index:999;min-width:160px;overflow:hidden}.ctx-item{padding:.65rem 1rem;font-size:.8rem;font-weight:600;cursor:pointer;color:#374151}.ctx-item:hover{background:#fef3c7;color:#92400e}.ctx-item.active{color:#92400e;background:#fef3c7}.modal-bg{background:rgba(50,0,0,0.55);backdrop-filter:blur(6px);position:fixed;inset:0;z-index:50;display:flex;align-items:center;justify-content:center}@keyframes fadeIn{from{opacity:0;transform:translateY(8px)}to{opacity:1;transform:translateY(0)}}.fade-in{animation:fadeIn .25s ease}@keyframes toastIn{from{opacity:0;transform:translateY(20px)}to{opacity:1;transform:translateY(0)}}.toast-enter{animation:toastIn .3s ease}@keyframes toastOut{to{opacity:0;transform:translateY(10px)}}.toast-exit{animation:toastOut .3s ease forwards}::-webkit-scrollbar{width:5px;height:5px}::-webkit-scrollbar-thumb{background:#d4c4a0;border-radius:10px}::-webkit-scrollbar-thumb:hover{background:#b45309}</style><script>tailwind.config={theme:{extend:{colors:{brand:'#b45309',dark:'#7f1d1d'}}}}</script></head>
 <body class="overflow-hidden bg-[#f5f3f0] text-sm">
 
 <!-- ============================================================ -->
@@ -18,15 +18,18 @@
   <!-- Background: drum image -->
   <div class="absolute inset-0" style="background-image:url('images/anh3.jpg');background-size:cover;background-position:center"></div>
   <div class="absolute inset-0" style="background:linear-gradient(135deg,rgba(110,0,0,0.3) 0%,rgba(40,0,0,0.5) 100%)"></div>
-  <!-- Crane watermark right -->
-  <div class="absolute right-0 top-0 bottom-0 w-1/2 pointer-events-none" style="background-image:url('images/bg-crane.png');background-repeat:no-repeat;background-position:right center;background-size:55%;opacity:0.09"></div>
+  <!-- Crane watermark removed to fix white frame issue -->
 
   <!-- Content -->
-  <div class="relative z-10 flex flex-col items-center justify-center flex-1 px-6 py-8">
+  <div id="login-content-wrapper" class="relative z-10 flex flex-col items-center justify-center flex-1 px-6 py-8 transition-transform duration-500" style="transform: scale(0.9); transform-origin: center;">
     <!-- Logo -->
     <div class="text-center mb-8">
-      <div class="w-20 h-20 rounded-full mx-auto mb-4 flex items-center justify-center shadow-2xl" style="background:linear-gradient(135deg,#b45309,#78350f);border:3px solid rgba(253,230,138,0.5)">
-        <i class="fa-solid fa-industry text-3xl" style="color:#fef3c7"></i>
+      <div class="w-44 h-44 mx-auto mb-6 flex items-center justify-center relative logo-container">
+        <div class="absolute inset-0 rounded-full logo-glow"></div>
+        <div class="relative overflow-hidden rounded-full logo-wrapper">
+          <img src="images/logo-final.png" class="w-full h-full object-contain relative z-10" alt="Logo Khuyến Công"/>
+          <div class="shine-effect"></div>
+        </div>
       </div>
       <div class="text-[10px] font-black uppercase tracking-widest mb-1" style="color:rgba(253,230,138,0.65)">BỘ CÔNG THƯƠNG — CỤC CÔNG NGHIỆP ĐỊA PHƯƠNG</div>
       <h1 class="text-2xl font-black text-white" style="letter-spacing:0.06em">HỆ THỐNG QUẢN LÝ KHUYẾN CÔNG</h1>
@@ -40,40 +43,40 @@
       <div class="grid grid-cols-5 gap-3">
 
         <!-- CNNT -->
-        <button onclick="loginAs('CNNT')" class="login-role-card" style="--rc:#16a34a">
-          <div class="role-icon" style="background:#16a34a"><i class="fa-solid fa-shop"></i></div>
+        <button onclick="loginAs('CNNT')" class="login-role-card" style="--rc:#16a34a; --delay: 0.05s">
+          <div class="role-icon" style="background:linear-gradient(135deg,#22c55e,#15803d)"><i class="fa-solid fa-shop"></i></div>
           <div class="role-label">Cơ sở CNNT</div>
           <div class="role-desc">Cơ sở công nghiệp nông thôn đăng ký hỗ trợ</div>
           <div class="role-action">Vào hệ thống →</div>
         </button>
 
         <!-- TTKC -->
-        <button onclick="loginAs('TTKC')" class="login-role-card" style="--rc:#0891b2">
-          <div class="role-icon" style="background:#0891b2"><i class="fa-solid fa-building-columns"></i></div>
+        <button onclick="loginAs('TTKC')" class="login-role-card" style="--rc:#0891b2; --delay: 0.1s">
+          <div class="role-icon" style="background:linear-gradient(135deg,#06b6d4,#0891b2)"><i class="fa-solid fa-building-columns"></i></div>
           <div class="role-label">TT Khuyến công</div>
           <div class="role-desc">Hỗ trợ lập hồ sơ cho cơ sở CNNT cấp tỉnh</div>
           <div class="role-action">Vào hệ thống →</div>
         </button>
 
         <!-- SO -->
-        <button onclick="loginAs('SO')" class="login-role-card" style="--rc:#d97706">
-          <div class="role-icon" style="background:#d97706"><i class="fa-solid fa-landmark"></i></div>
+        <button onclick="loginAs('SO')" class="login-role-card" style="--rc:#d97706; --delay: 0.15s">
+          <div class="role-icon" style="background:linear-gradient(135deg,#f59e0b,#d97706)"><i class="fa-solid fa-landmark"></i></div>
           <div class="role-label">Sở Công Thương</div>
           <div class="role-desc">Thẩm định & nghiệm thu đề án cấp Tỉnh</div>
           <div class="role-action">Vào hệ thống →</div>
         </button>
 
         <!-- BO -->
-        <button onclick="loginAs('BO')" class="login-role-card" style="--rc:#dc2626">
-          <div class="role-icon" style="background:#dc2626"><i class="fa-solid fa-flag"></i></div>
+        <button onclick="loginAs('BO')" class="login-role-card" style="--rc:#dc2626; --delay: 0.2s">
+          <div class="role-icon" style="background:linear-gradient(135deg,#ef4444,#dc2626)"><i class="fa-solid fa-flag"></i></div>
           <div class="role-label">Bộ / Cục CT</div>
           <div class="role-desc">Phê duyệt kế hoạch và giám sát quốc gia</div>
           <div class="role-action">Vào hệ thống →</div>
         </button>
 
         <!-- ADMIN -->
-        <button onclick="loginAs('ADMIN')" class="login-role-card login-role-admin" style="--rc:#7c3aed">
-          <div class="role-icon" style="background:linear-gradient(135deg,#7c3aed,#4c1d95)"><i class="fa-solid fa-shield-halved"></i></div>
+        <button onclick="loginAs('ADMIN')" class="login-role-card login-role-admin" style="--rc:#7c3aed; --delay: 0.25s">
+          <div class="role-icon" style="background:linear-gradient(135deg,#8b5cf6,#6d28d9)"><i class="fa-solid fa-shield-halved"></i></div>
           <div class="role-label" style="color:#c4b5fd">Quản trị viên</div>
           <div class="role-desc">Toàn quyền quản lý hệ thống</div>
           <div class="role-action">Vào hệ thống →</div>
@@ -93,13 +96,13 @@
 <div id="main-app" class="flex h-screen overflow-hidden" style="display:none">
 <aside class="sidebar w-64 flex flex-col shrink-0 overflow-y-auto">
   <!-- Logo Gov -->
-  <div class="p-4 flex items-center gap-3" style="border-bottom:1px solid rgba(253,230,138,0.15)">
-    <div class="w-11 h-11 rounded-xl flex items-center justify-center shadow-lg shrink-0" style="background:linear-gradient(135deg,#b45309,#78350f)">
-      <i class="fa-solid fa-industry text-lg" style="color:#fef3c7"></i>
+  <div class="p-4 flex items-center gap-3" style="border-bottom:1px solid rgba(255,255,255,0.05)">
+    <div class="w-14 h-14 rounded-full overflow-hidden flex items-center justify-center shrink-0">
+      <img src="images/logo-final.png" class="w-full h-full object-cover scale-110" alt="Logo"/>
     </div>
     <div>
-      <div class="font-black text-xs leading-tight" style="color:#fef3c7">CỔNG THÔNG TIN</div>
-      <div class="text-[9px] font-black uppercase tracking-wider" style="color:rgba(253,230,138,0.6)">Khuyến Công Điện Tử</div>
+      <div class="font-black text-xs leading-tight text-white tracking-wide">CỔNG THÔNG TIN</div>
+      <div class="text-[9px] font-black uppercase tracking-wider text-indigo-300 mt-0.5">Khuyến Công Điện Tử</div>
     </div>
   </div>
   <nav id="main-nav" class="flex-1 p-3 space-y-1 mt-2">
@@ -113,8 +116,8 @@
     <div id="menu-kpi"       class="nav-item" onclick="switchView('kpi')"><i class="fa-solid fa-chart-line w-5 mr-2.5 text-center"></i>Chỉ tiêu KPI</div>
   </nav>
   <!-- Role panel -->
-  <div class="p-3 m-3 rounded-xl" id="role-panel" style="background:rgba(0,0,0,0.3);border:1px solid rgba(253,230,138,0.15)">
-    <div class="text-[9px] font-black uppercase tracking-widest mb-2" style="color:rgba(253,230,138,0.5)">🔐 Đăng nhập Demo</div>
+  <div class="p-3 m-3 rounded-xl" id="role-panel" style="background:#1E293B;border:1px solid rgba(255,255,255,0.05)">
+    <div class="text-[9px] font-black uppercase tracking-widest mb-2 text-slate-400">🔐 Đăng nhập Demo</div>
     <div class="space-y-1">
       <button onclick="switchRole('CNNT')" id="rbtn-CNNT" class="w-full text-left px-3 py-2 rounded-lg text-xs font-bold transition-all text-slate-400 hover:bg-white/10"><i class="fa-solid fa-shop w-4 mr-2"></i>Cơ sở CNNT</button>
       <button onclick="switchRole('TTKC')" id="rbtn-TTKC" class="w-full text-left px-3 py-2 rounded-lg text-xs font-bold transition-all text-slate-400 hover:bg-white/10"><i class="fa-solid fa-building-columns w-4 mr-2"></i>TT Khuyến công</button>
@@ -129,41 +132,41 @@
   <div class="gov-banner shrink-0" style="padding:0">
     <div class="flex items-center justify-between px-6 py-3">
       <div class="flex items-center gap-4">
-        <div class="w-10 h-10 rounded-full flex items-center justify-center shrink-0" style="background:rgba(255,255,255,0.15);border:2px solid rgba(253,230,138,0.4)">
-          <i class="fa-solid fa-star-of-life" style="color:#fde68a;font-size:1rem"></i>
+        <div class="w-12 h-12 rounded-full overflow-hidden flex items-center justify-center shrink-0">
+          <img src="images/logo-final.png" class="w-full h-full object-cover scale-110" alt="Logo"/>
         </div>
         <div>
-          <div class="text-[10px] font-bold uppercase tracking-widest" style="color:rgba(253,230,138,0.7)">Bộ Công Thương — Cục Công nghiệp địa phương</div>
-          <div class="font-black text-white" style="font-size:0.95rem;letter-spacing:0.01em">HỆ THỐNG QUẢN LÝ KHUYẾN CÔNG</div>
+          <div class="text-[10px] font-bold uppercase tracking-wide text-slate-500">Bộ Công Thương — Cục Công nghiệp địa phương</div>
+          <div class="font-black text-slate-800 mt-0.5" style="font-size:0.95rem;letter-spacing:0.01em">HỆ THỐNG QUẢN LÝ KHUYẾN CÔNG</div>
         </div>
       </div>
       <div class="flex items-center gap-5">
-        <div class="flex items-center gap-2">
-          <i class="fa-solid fa-search" style="color:rgba(253,230,138,0.5)"></i>
-          <input type="text" placeholder="Tìm kiếm toàn hệ thống..." class="bg-transparent outline-none text-sm" style="color:rgba(255,255,255,0.85);width:220px" placeholder-style="color:rgba(253,230,138,0.4)"/>
+        <div class="flex items-center gap-2 bg-slate-50 border border-slate-200 rounded-xl px-3 py-1.5 focus-within:ring-2 focus-within:ring-indigo-500/20 focus-within:bg-white transition-all">
+          <i class="fa-solid fa-search text-slate-400"></i>
+          <input type="text" placeholder="Tìm kiếm toàn hệ thống..." class="bg-transparent outline-none text-sm text-slate-700 placeholder-slate-400" style="width:220px"/>
         </div>
-        <div style="width:1px;height:28px;background:rgba(253,230,138,0.2)"></div>
-        <button class="relative" style="color:rgba(253,230,138,0.7)" onmouseover="this.style.color='#fde68a'" onmouseout="this.style.color='rgba(253,230,138,0.7)'">
+        <div style="width:1px;height:28px;background:#e2e8f0"></div>
+        <button class="relative text-slate-400 hover:text-indigo-600 transition-colors">
           <i class="fa-solid fa-bell text-lg"></i>
-          <span class="absolute -top-1 -right-1 w-2 h-2 rounded-full" style="background:#ef4444;border:2px solid #7f1d1d"></span>
+          <span class="absolute -top-1 -right-1 w-2 h-2 rounded-full" style="background:#ef4444;border:2px solid #ffffff"></span>
         </button>
-        <div class="flex items-center gap-2 cursor-pointer">
+        <div class="flex items-center gap-2 cursor-pointer pl-4" style="border-left:1px solid #e2e8f0">
           <div class="text-right">
-            <div id="header-name" class="text-sm font-bold text-white">Cơ sở CNNT</div>
-            <div id="header-role" class="text-[10px] font-bold" style="color:#fde68a">CS CNNT · Đang hoạt động</div>
+            <div id="header-name" class="text-sm font-black text-slate-800">Cơ sở CNNT</div>
+            <div id="header-role" class="text-[10px] font-bold text-slate-500">CS CNNT · Đang hoạt động</div>
           </div>
-          <div id="header-avatar" class="w-9 h-9 rounded-xl flex items-center justify-center text-white font-black text-sm" style="background:rgba(255,255,255,0.2);border:2px solid rgba(253,230,138,0.4)">
-            <i class="fa-solid fa-shop text-xs"></i>
+          <div id="header-avatar" class="w-9 h-9 rounded-xl flex items-center justify-center text-indigo-600 font-black text-sm" style="background:rgba(99,102,241,0.1);border:1px solid rgba(99,102,241,0.2)">
+            <i class="fa-solid fa-shield-halved text-xs"></i>
           </div>
         </div>
       </div>
     </div>
-    <!-- Red accent bar -->
-    <div class="flex items-center px-6 gap-1" style="background:rgba(0,0,0,0.2);padding-top:6px;padding-bottom:6px;font-size:0.7rem">
-      <i class="fa-solid fa-house mr-2" style="color:rgba(253,230,138,0.6)"></i>
-      <span style="color:rgba(253,230,138,0.5)">Trang chủ</span>
-      <span style="color:rgba(253,230,138,0.3)"> / </span>
-      <span id="breadcrumb-view" style="color:rgba(253,230,138,0.85);font-weight:700">Tổng quan hệ thống</span>
+    <!-- Breadcrumb bar -->
+    <div class="flex items-center px-6 gap-1" style="background:#f8fafc;border-top:1px solid #e2e8f0;padding-top:8px;padding-bottom:8px;font-size:0.75rem">
+      <i class="fa-solid fa-house mr-2 text-slate-400"></i>
+      <span class="text-slate-500 hover:text-indigo-600 transition-colors cursor-pointer">Trang chủ</span>
+      <span class="text-slate-300 mx-1">/</span>
+      <span id="breadcrumb-view" class="text-indigo-600 font-bold">Tổng quan hệ thống</span>
     </div>
   </div>
   <div class="flex-1 overflow-y-auto content-area">
@@ -334,7 +337,25 @@
     </div>
     <div class="bg-slate-50 p-4 border-t border-slate-200 flex justify-end gap-3">
       <button onclick="closeModal('modal-create-company')" class="px-5 py-2.5 font-bold text-slate-500 hover:bg-slate-200 rounded-lg">Hủy</button>
-      <button onclick="showToast('Thêm mới thành công!'); closeModal('modal-create-company')" class="bg-blue-600 text-white px-6 py-2.5 rounded-lg font-bold shadow-md hover:bg-blue-700">Lưu thông tin</button>
+      <button onclick="saveNewCompany()" class="bg-blue-600 text-white px-6 py-2.5 rounded-lg font-bold shadow-md hover:bg-blue-700">Lưu thông tin</button>
+    </div>
+  </div>
+</div>
+<!-- MODAL: CONFIRM CUSTOM -->
+<div id="modal-confirm" class="modal-bg hidden opacity-0 transition-all duration-300 pointer-events-none">
+  <div class="panel p-6 w-full max-w-md transform scale-90 transition-all duration-300 shadow-2xl border-2 border-white/20">
+    <div class="flex items-center gap-4 mb-4">
+      <div class="w-12 h-12 rounded-full bg-rose-50 flex items-center justify-center text-rose-500 text-xl shrink-0">
+        <i class="fa-solid fa-circle-question"></i>
+      </div>
+      <div>
+        <h3 id="confirm-title" class="font-black text-slate-900">Xác nhận hành động</h3>
+        <p id="confirm-msg" class="text-sm text-slate-500 leading-relaxed mt-1"></p>
+      </div>
+    </div>
+    <div class="flex justify-end gap-3 mt-6">
+      <button id="confirm-cancel" class="px-5 py-2.5 font-bold text-slate-500 hover:bg-slate-100 rounded-xl transition-colors">Bỏ qua</button>
+      <button id="confirm-ok" class="bg-rose-600 text-white px-6 py-2.5 rounded-xl font-bold shadow-lg shadow-rose-500/30 hover:bg-rose-700 hover:shadow-rose-500/50 transition-all">Xác nhận</button>
     </div>
   </div>
 </div>
@@ -342,19 +363,85 @@
 <style>
 @keyframes loginFadeOut{to{opacity:0;transform:scale(1.04)}}
 @keyframes appFadeIn{from{opacity:0}to{opacity:1}}
-.login-role-card{display:flex;flex-direction:column;align-items:center;text-align:center;padding:1.25rem 0.75rem;border-radius:1rem;cursor:pointer;background:rgba(255,255,255,0.05);border:1px solid rgba(253,230,138,0.15);transition:all 0.25s;color:#fff;}
-.login-role-card:hover{background:rgba(255,255,255,0.1);border-color:rgba(253,230,138,0.4);transform:translateY(-5px) scale(1.03);box-shadow:0 16px 40px rgba(0,0,0,0.5);}
-.login-role-admin{border:1px solid rgba(196,181,253,0.3);}
-.login-role-admin:hover{box-shadow:0 16px 40px rgba(124,58,237,0.45);}
-.role-icon{width:3rem;height:3rem;border-radius:0.875rem;display:flex;align-items:center;justify-content:center;font-size:1.25rem;color:#fff;margin-bottom:0.75rem;box-shadow:0 4px 16px rgba(0,0,0,0.3);}
-.role-label{font-weight:900;font-size:0.8rem;color:#fff;margin-bottom:0.25rem}
-.role-desc{font-size:0.65rem;color:rgba(253,230,138,0.45);line-height:1.45;margin-bottom:0.75rem;flex:1}
-.role-action{font-size:0.65rem;font-weight:800;color:rgba(253,230,138,0.45);transition:all 0.2s}
-.login-role-card:hover .role-action{color:#fde68a}
+@keyframes slideUp{from{opacity:0;transform:translateY(30px)}to{opacity:1;transform:translateY(0)}}
+@keyframes bg-pan{0%{background-position:0% 50%}50%{background-position:100% 50%}100%{background-position:0% 50%}}
+
+#login-screen::after {
+  content: '';
+  position: absolute;
+  inset: 0;
+  background: radial-gradient(circle at var(--mx, 50%) var(--my, 50%), rgba(253,230,138,0.15) 0%, transparent 60%);
+  pointer-events: none;
+  z-index: 1;
+}
+
+/* Logo Animation */
+@keyframes logo-float {
+  0%, 100% { transform: translateY(0) rotate(0); }
+  50% { transform: translateY(-8px) rotate(1deg); }
+}
+@keyframes glow-pulse {
+  0%, 100% { box-shadow: 0 0 20px rgba(0,0,0,0.4), 0 0 40px rgba(253,230,138,0.1); }
+  50% { box-shadow: 0 0 40px rgba(0,0,0,0.6), 0 0 80px rgba(253,230,138,0.3); }
+}
+@keyframes shine-sweep {
+  0% { left: -100%; top: -100%; }
+  20%, 100% { left: 100%; top: 100%; }
+}
+.logo-container { animation: logo-float 4s ease-in-out infinite; transition: transform 0.2s ease-out; }
+.logo-glow { animation: glow-pulse 3s ease-in-out infinite; }
+.logo-wrapper { width: 100%; height: 100%; position: relative; }
+.shine-effect {
+  position: absolute;
+  top: -100%;
+  left: -100%;
+  width: 200%;
+  height: 200%;
+  background: linear-gradient(135deg, transparent, rgba(255,255,255,0.2), transparent);
+  animation: shine-sweep 5s infinite;
+  z-index: 20;
+  pointer-events: none;
+}
+.login-role-card{
+  display:flex;flex-direction:column;align-items:center;text-align:center;padding:1.5rem 1rem;border-radius:1.5rem;cursor:pointer;
+  background:rgba(255,255,255,0.03);border:1px solid rgba(253,230,138,0.1);
+  color:#fff;perspective:1000px;overflow:hidden;position:relative;
+  opacity: 0; animation: slideUp 0.6s cubic-bezier(0.2, 0.8, 0.2, 1) forwards; animation-delay: var(--delay);
+  transition: all 0.5s cubic-bezier(0.4, 0, 0.2, 1);
+}
+.login-role-card::before{content:'';position:absolute;top:0;left:-100%;width:100%;height:100%;background:linear-gradient(90deg,transparent,rgba(255,255,255,0.1),transparent);transition:0.5s;}
+.login-role-card:hover::before{left:100%;}
+.login-role-card:hover{background:rgba(255,255,255,0.1);border-color:rgba(253,230,138,0.5);transform:translateY(-12px) rotateX(8deg) rotateY(5deg);box-shadow:0 30px 60px rgba(0,0,0,0.7), inset 0 0 30px rgba(253,230,138,0.1);}
+.role-icon{width:3.5rem;height:3.5rem;border-radius:1.125rem;display:flex;align-items:center;justify-content:center;font-size:1.5rem;color:#fff;margin-bottom:1.25rem;box-shadow:0 8px 20px rgba(0,0,0,0.4), inset 0 2px 4px rgba(255,255,255,0.3);border:1px solid rgba(255,255,255,0.1);transition:all 0.4s;}
+.login-role-card:hover .role-icon{transform:translateZ(30px) scale(1.1);box-shadow:0 12px 30px rgba(0,0,0,0.5);}
+.role-label{font-weight:900;font-size:0.9rem;color:#fff;margin-bottom:0.4rem;letter-spacing:0.02em}
+.role-desc{font-size:0.7rem;color:rgba(253,230,138,0.4);line-height:1.5;margin-bottom:1.25rem;flex:1}
+.role-action{font-size:0.7rem;font-weight:800;color:rgba(253,230,138,0.3);transition:all 0.3s;padding:0.4rem 0.8rem;border-radius:0.75rem;border:1px solid rgba(253,230,138,0.1)}
+.login-role-card:hover .role-action{color:#fde68a;border-color:rgba(253,230,138,0.4);background:rgba(253,230,138,0.05)}
 #btn-logout{margin-top:1rem;width:100%;background:rgba(50,0,0,0.5);color:rgba(253,230,138,0.7);border:1px solid rgba(253,230,138,0.15);border-radius:0.5rem;padding:0.5rem;font-size:0.7rem;font-weight:700;cursor:pointer;transition:all 0.2s;display:none;}
 #btn-logout:hover{background:rgba(100,0,0,0.85);color:#fde68a}
 </style>
 
 <script src="app-data.js"></script>
 <script src="app-logic.js"></script>
+<script>
+// Mouse Interactive Effects
+document.addEventListener('mousemove', (e) => {
+  const x = (e.clientX / window.innerWidth) * 100;
+  const y = (e.clientY / window.innerHeight) * 100;
+  const screen = document.getElementById('login-screen');
+  if (screen) {
+    screen.style.setProperty('--mx', `${x}%`);
+    screen.style.setProperty('--my', `${y}%`);
+  }
+  
+  // Parallax Logo
+  const logo = document.querySelector('.logo-container');
+  if (logo && screen && screen.style.display !== 'none') {
+    const moveX = (e.clientX - window.innerWidth/2) / 50;
+    const moveY = (e.clientY - window.innerHeight/2) / 50;
+    logo.style.transform = `translate(${moveX}px, ${moveY}px)`;
+  }
+});
+</script>
 </body></html>
