@@ -2,6 +2,7 @@
 // APP DATA - Mock Data Engine cho Prototype v4.0 (Full Requirements)
 // =====================================================
 const STATUS = {
+  '-1': { label: 'B? t? ch?i',       cls: 'bg-rose-100 text-rose-700 border-rose-300',   step: -1 },
   0:  { label: '0. Đăng ký cơ sở',     cls: 'bg-slate-100 text-slate-600 border-slate-200',   step: 0 },
   1:  { label: '1. Thẩm định cơ sở',   cls: 'bg-indigo-50 text-indigo-700 border-indigo-100',   step: 1 },
   2:  { label: '2. Thẩm định cấp Bộ',  cls: 'bg-indigo-100 text-indigo-800 border-indigo-200', step: 2 },
@@ -117,7 +118,7 @@ const ROLES = {
   }
 };
 
-const FIELDS = [
+let FIELDS = [
   'Đào tạo nghề, truyền nghề',
   'Hỗ trợ máy móc, công nghệ mới',
   'Phát triển SP CNNT tiêu biểu (OCOP)',

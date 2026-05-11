@@ -581,19 +581,55 @@ function renderProjects() {
     // Tạo nút hành động dựa trên vai trò + trạng thái
     let actionHtml = '';
     const act = role.actions[p.status];
-    if (act) {
-      actionHtml = `<button class="action-btn ${act.cls} border-0" onclick="event.stopPropagation();roleAction('${p.id}',${act.nextStatus},'${act.label}')">${act.label}</button>`;
+    const canReject = role.rejectFrom && role.rejectFrom.includes(p.status);
+
+    if (p.status === -1) {
+      actionHtml = '<span class="bg-slate-100 text-slate-500 rounded-full px-3 py-1 text-xs font-bold inline-flex items-center"><i class="fa-solid fa-lock mr-2 text-[10px]"></i>Đã khóa</span>';
+    } else if (p.status === 10) {
+      actionHtml = '<span class="bg-emerald-50 text-emerald-600 rounded-full px-3 py-1 text-xs font-bold inline-flex items-center"><i class="fa-solid fa-check-double mr-1 text-[10px]"></i>Hoàn tất</span>';
+    } else if (act || canReject) {
+      // Hover Dropdown UI - Tự động đổ menu khi di chuyển chuột
+      actionHtml = `
+      <div class="relative inline-block text-left group" onclick="event.stopPropagation();">
+        <button class="cursor-pointer inline-flex items-center justify-center w-full rounded-lg border border-indigo-200 shadow-sm px-4 py-2.5 bg-indigo-50 text-sm font-bold text-indigo-700 hover:bg-indigo-100 transition-colors focus:outline-none">
+          <i class="fa-solid fa-screwdriver-wrench mr-2 text-indigo-500"></i> Thao tác <i class="fa-solid fa-chevron-down ml-2 text-[10px] opacity-70 group-hover:-rotate-180 transition-transform duration-300"></i>
+        </button>
+        
+        <div class="absolute z-50 right-0 top-full pt-1.5 w-56 invisible opacity-0 translate-y-2 group-hover:visible group-hover:opacity-100 group-hover:translate-y-0 transition-all duration-300 ease-out origin-top-right">
+          <div class="rounded-xl shadow-2xl bg-white border border-slate-100 divide-y divide-slate-50 overflow-hidden">
+            <div class="px-4 py-2.5 bg-slate-50/80">
+              <p class="text-[10px] font-black uppercase text-slate-500 tracking-wider">Hành động khả dụng</p>
+            </div>
+            <div class="p-1">
+              <a href="#" onclick="event.preventDefault(); viewProjectDetail('${p.id}');" class="text-slate-600 group/item flex items-center px-3 py-2 text-sm hover:bg-blue-50 rounded-lg hover:text-blue-700 font-medium transition-colors">
+                <div class="w-7 h-7 rounded-md bg-white shadow-sm border border-slate-200 flex items-center justify-center mr-3 group-hover/item:border-blue-300 transition-colors">
+                  <i class="fa-regular fa-eye text-slate-400 group-hover/item:text-blue-600"></i>
+                </div>
+                Chi tiết hồ sơ
+              </a>
+              ${act ? `<a href="#" onclick="event.preventDefault(); roleAction('${p.id}',${act.nextStatus},'${act.label}');" class="text-slate-600 group/item flex items-center px-3 py-2 mt-1 text-sm hover:bg-emerald-50 rounded-lg hover:text-emerald-700 font-bold transition-colors">
+                <div class="w-7 h-7 rounded-md bg-white shadow-sm border border-slate-200 flex items-center justify-center mr-3 group-hover/item:border-emerald-300 transition-colors">
+                  <i class="fa-solid fa-check text-slate-400 group-hover/item:text-emerald-600"></i>
+                </div>
+                ${act.label}
+              </a>` : ''}
+            </div>
+            ${canReject ? `<div class="p-1 bg-rose-50/30">
+              <a href="#" onclick="event.preventDefault(); roleAction('${p.id}',0,'Từ chối');" class="text-rose-600 group/item flex items-center px-3 py-2 text-sm hover:bg-rose-100 rounded-lg hover:text-rose-800 font-bold transition-colors">
+                <div class="w-7 h-7 rounded-md bg-white shadow-sm border border-rose-200 flex items-center justify-center mr-3 group-hover/item:border-rose-300 transition-colors">
+                  <i class="fa-solid fa-ban text-rose-400 group-hover/item:text-rose-600"></i>
+                </div>
+                Từ chối / Yêu cầu sửa
+              </a>
+            </div>` : ''}
+          </div>
+        </div>
+      </div>
+      `;
+    } else {
+      actionHtml = `<span class="inline-flex items-center text-[10px] text-slate-400 font-bold px-2 py-1 bg-slate-50 rounded-md border border-slate-100"><i class="fa-regular fa-clock mr-1"></i> Chờ ${STATUS[p.status+1]?.label.replace('Chờ ','') || '...'}</span>`;
     }
-    // Nút từ chối dành cho Sở Công Thương
-    if (role.rejectFrom && role.rejectFrom.includes(p.status)) {
-      actionHtml += ` <button class="action-btn bg-rose-50 text-rose-600 border-rose-200 ml-1" onclick="event.stopPropagation();roleAction('${p.id}',0,'Từ chối')">Từ chối</button>`;
-    }
-    if (!actionHtml && p.status < 10) {
-      actionHtml = `<span class="text-[10px] text-slate-400 font-bold">Chờ ${STATUS[p.status+1]?.label.replace('Chờ ','') || '...'}</span>`;
-    }
-    if (p.status === 10) {
-      actionHtml = '<span class="text-xs text-emerald-600 font-bold"><i class="fa-solid fa-check-double mr-1"></i>Hoàn tất</span>';
-    }
+
     return `<tr class="hover:bg-slate-50 cursor-pointer transition-colors" onclick="viewProjectDetail('${p.id}')">
       <td class="px-5 py-4 font-bold text-slate-400 text-xs">${p.id}</td>
       <td class="px-5 py-4"><div class="font-bold text-slate-800">${p.name}</div><div class="text-xs text-blue-600 font-semibold mt-0.5">${p.type} · ${fieldName(p.field)}</div></td>
@@ -621,6 +657,13 @@ function roleAction(pid, nextStatus, label) {
       }
     );
   } else {
+    // BR-R03: Chặn luồng nếu thiếu Báo cáo ở bước 8 -> 9
+    if (p.status === 8 && nextStatus === 9 && !p._mockReports) {
+      showToast(`Hồ sơ ${pid} thiếu Báo cáo hoàn thành. Yêu cầu Cơ sở cập nhật trước khi duyệt!`, 'error');
+      p._mockReports = true; // Mock: Tự động giả định đã bổ sung trong lần click sau
+      return; 
+    }
+
     showToast(`Đề án ${pid}: ${oldLabel} → ${STATUS[nextStatus].label}`);
     p.status = nextStatus;
     if (nextStatus === 10 && (p.disbursedAdvance + p.disbursedSettle) === 0) p.disbursedSettle = Math.round(p.budget * 0.95);
@@ -988,12 +1031,12 @@ function initFundCharts(funded, totalBudget, totalDis) {
   });
 }
 
-function openDisbursalModal(pid) {
+function openDisbursalModal(pid, type = 'advance') {
   const p = AppData.projects.find(x => x.id === pid);
   const currentDisbursed = (p.disbursedAdvance||0) + (p.disbursedSettle||0);
   const remaining = p.budget - currentDisbursed;
   
-  document.getElementById('dis-project-name').textContent = p.name;
+  document.getElementById('dis-project-name').textContent = p.name + (type === 'advance' ? ' (T?m ?ng)' : ' (Quy?t to?n)');
   document.getElementById('dis-budget').textContent = p.budget.toLocaleString() + ' VNĐ';
   document.getElementById('dis-advance').textContent = (p.disbursedAdvance||0).toLocaleString() + ' VNĐ';
   document.getElementById('dis-settle').textContent = (p.disbursedSettle||0).toLocaleString() + ' VNĐ';
@@ -1004,7 +1047,7 @@ function openDisbursalModal(pid) {
   disAmountInput.oninput = (e) => checkDisLimit(e.target.value, remaining);
   
   document.getElementById('dis-error').classList.add('hidden');
-  document.getElementById('dis-btn-submit').onclick = () => submitDisbursal(pid, remaining);
+  document.getElementById('dis-btn-submit').onclick = () => submitDisbursal(pid, remaining, type);
   openModal('modal-disbursal');
 }
 
@@ -1023,7 +1066,7 @@ function checkDisLimit(val, remaining) {
   }
 }
 
-function submitDisbursal(pid, remaining) {
+function submitDisbursal(pid, remaining, type) {
   const val = Number(document.getElementById('dis-amount').value);
   if(!val) { showToast('Vui lòng nhập số tiền!', 'error'); return; }
   if(val > 150000000) { showToast('Vượt định mức 150tr (TT28)! Không thể thực chi.', 'error'); return; }
@@ -1031,9 +1074,7 @@ function submitDisbursal(pid, remaining) {
   
   const p = AppData.projects.find(x => x.id === pid);
   
-  // Tạm thời để đơn giản gán vào Settle
-  const disType = document.getElementById('dis-type') ? document.getElementById('dis-type').value : 'settle';
-  if (disType === 'advance') {
+  if (type === 'advance') {
     p.disbursedAdvance = (p.disbursedAdvance || 0) + val;
   } else {
     p.disbursedSettle = (p.disbursedSettle || 0) + val;
