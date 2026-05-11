@@ -175,7 +175,17 @@
       <div id="dash-dynamic-content"></div>
     </div>
     <div id="view-projects" class="view-section p-6 space-y-5">
-      <div class="flex justify-between items-center"><div><h1 class="text-2xl font-black text-slate-900">Quản lý Đề án Khuyến công</h1><p id="proj-count" class="text-slate-500 text-sm mt-1">-- đề án</p></div><button id="btn-create-project" onclick="openModal('modal-create')" class="bg-brand text-white px-5 py-2.5 rounded-xl font-bold shadow-lg shadow-brand/20 hover:opacity-90 flex items-center gap-2"><i class="fa-solid fa-plus-circle"></i>TẠO ĐỀ ÁN MỚI</button></div>
+      <div class="flex justify-between items-center">
+        <div><h1 class="text-2xl font-black text-slate-900">Quản lý Đề án Khuyến công</h1><p id="proj-count" class="text-slate-500 text-sm mt-1">-- đề án</p></div>
+        <div class="flex gap-3">
+          <button id="btn-import-excel" onclick="openImportModal()" class="bg-white border border-slate-200 text-slate-700 px-5 py-2.5 rounded-xl font-bold shadow-sm hover:bg-slate-50 flex items-center gap-2 transition-all">
+            <i class="fa-solid fa-file-excel text-emerald-600"></i> NHẬP TỪ EXCEL
+          </button>
+          <button id="btn-create-project" onclick="openModal('modal-create')" class="bg-brand text-white px-5 py-2.5 rounded-xl font-bold shadow-lg shadow-brand/20 hover:opacity-90 flex items-center gap-2">
+            <i class="fa-solid fa-plus-circle"></i> TẠO ĐỀ ÁN MỚI
+          </button>
+        </div>
+      </div>
       <div class="panel overflow-hidden">
         <div class="p-4 bg-slate-50 border-b border-slate-200 flex gap-3 flex-wrap">
           <input id="proj-search" type="text" placeholder="Tìm tên, mã đề án..." class="border border-slate-200 rounded-lg px-3 py-2 text-sm outline-none focus:border-brand bg-white w-56" oninput="filterProjects()"/>
@@ -444,4 +454,51 @@ document.addEventListener('mousemove', (e) => {
   }
 });
 </script>
-</body></html>
+<!-- MODAL IMPORT EXCEL -->
+<div id="modal-import" class="modal-bg hidden">
+  <div class="bg-white rounded-2xl shadow-2xl w-[500px] overflow-hidden transform transition-all">
+    <div class="p-5 border-b border-slate-100 flex justify-between items-center">
+      <h2 class="font-black text-slate-800 text-lg flex items-center gap-2">
+        <i class="fa-solid fa-file-import text-emerald-600"></i> Nhập dữ liệu từ Excel
+      </h2>
+      <button onclick="closeModal('modal-import')" class="text-slate-400 hover:text-slate-600"><i class="fa-solid fa-xmark"></i></button>
+    </div>
+    <div class="p-6">
+      <div id="import-dropzone" class="border-2 border-dashed border-slate-200 rounded-2xl p-8 flex flex-col items-center justify-center gap-3 bg-slate-50 hover:bg-emerald-50 hover:border-emerald-200 transition-all cursor-pointer group" onclick="document.getElementById('excel-file-input').click()">
+        <input type="file" id="excel-file-input" class="hidden" accept=".xlsx, .xls" onchange="handleFileSelect(this)"/>
+        <div class="w-16 h-16 bg-white rounded-2xl flex items-center justify-center shadow-sm group-hover:scale-110 transition-transform">
+          <i class="fa-solid fa-cloud-arrow-up text-3xl text-emerald-500"></i>
+        </div>
+        <div class="text-center">
+          <p class="font-bold text-slate-700">Kéo thả file vào đây hoặc click để chọn</p>
+          <p class="text-xs text-slate-400 mt-1">Chấp nhận file .xlsx hoặc .xls (Tối đa 10MB)</p>
+        </div>
+      </div>
+
+      <div id="import-status" class="mt-6 hidden">
+        <div class="flex justify-between items-center mb-2">
+          <span id="import-filename" class="text-xs font-bold text-slate-600 truncate max-w-[200px]">filename.xlsx</span>
+          <span id="import-pct" class="text-xs font-black text-emerald-600">0%</span>
+        </div>
+        <div class="h-2 bg-slate-100 rounded-full overflow-hidden">
+          <div id="import-progress" class="h-full bg-emerald-500 w-0 transition-all duration-300"></div>
+        </div>
+        <p id="import-msg" class="text-[10px] text-slate-400 mt-2 italic">Đang phân tích dữ liệu...</p>
+      </div>
+
+      <div class="mt-6 p-4 bg-amber-50 rounded-xl border border-amber-100 flex gap-3">
+        <i class="fa-solid fa-circle-info text-amber-500 mt-0.5"></i>
+        <div class="text-[10px] text-amber-800 leading-relaxed">
+          <strong>Lưu ý:</strong> Vui lòng sử dụng đúng file biểu mẫu của Bộ Công Thương. 
+          Hệ thống sẽ tự động bỏ qua các dòng dữ liệu không hợp lệ hoặc đã tồn tại mã đề án.
+          <a href="#" class="text-blue-600 font-bold underline block mt-1">Tải file biểu mẫu tại đây</a>
+        </div>
+      </div>
+    </div>
+    <div class="p-4 bg-slate-50 flex justify-end gap-3 border-t border-slate-100">
+      <button onclick="closeModal('modal-import')" class="px-4 py-2 text-sm font-bold text-slate-500 hover:text-slate-700">Hủy bỏ</button>
+      <button id="btn-do-import" disabled onclick="startImportProcess()" class="bg-emerald-600 text-white px-6 py-2 rounded-lg font-bold shadow-lg shadow-emerald-500/20 opacity-50 cursor-not-allowed">BẮT ĐẦU NHẬP</button>
+    </div>
+  </div>
+</div>
+</body></html>

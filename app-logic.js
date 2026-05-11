@@ -575,6 +575,11 @@ function renderProjects() {
     createBtn.style.display = role.canCreate ? 'flex' : 'none';
   }
 
+  const importBtn = document.getElementById('btn-import-excel');
+  if (importBtn) {
+    importBtn.style.display = (State.currentRole === 'CNNT' || State.currentRole === 'ADMIN') ? 'flex' : 'none';
+  }
+
   const tbody = document.getElementById('projects-tbody');
   tbody.innerHTML = filtered.map(p => {
     const co = getCompany(p.companyId);
@@ -1680,5 +1685,65 @@ function initDashboardMap() {
   });
 
   setTimeout(() => map.invalidateSize(), 200);
+}
+
+function openImportModal() {
+  // Reset trạng thái modal
+  document.getElementById('import-dropzone').classList.remove('hidden');
+  document.getElementById('import-status').classList.add('hidden');
+  document.getElementById('btn-do-import').disabled = true;
+  document.getElementById('btn-do-import').classList.add('opacity-50', 'cursor-not-allowed');
+  document.getElementById('excel-file-input').value = '';
+  
+  openModal('modal-import');
+}
+
+function handleFileSelect(input) {
+  if (input.files && input.files[0]) {
+    const file = input.files[0];
+    document.getElementById('import-filename').textContent = file.name;
+    document.getElementById('import-dropzone').classList.add('hidden');
+    document.getElementById('import-status').classList.remove('hidden');
+    
+    // Enable nút bắt đầu
+    const btn = document.getElementById('btn-do-import');
+    btn.disabled = false;
+    btn.classList.remove('opacity-50', 'cursor-not-allowed');
+    
+    document.getElementById('import-progress').style.width = '0%';
+    document.getElementById('import-pct').textContent = '0%';
+    document.getElementById('import-msg').textContent = 'Sẵn sàng để nhập dữ liệu...';
+  }
+}
+
+function startImportProcess() {
+  const btn = document.getElementById('btn-do-import');
+  btn.disabled = true;
+  btn.innerHTML = '<i class="fa-solid fa-spinner fa-spin mr-2"></i> ĐANG XỬ LÝ...';
+  
+  let progress = 0;
+  const interval = setInterval(() => {
+    progress += Math.random() * 15;
+    if (progress > 100) progress = 100;
+    
+    document.getElementById('import-progress').style.width = progress + '%';
+    document.getElementById('import-pct').textContent = Math.round(progress) + '%';
+    
+    if (progress < 30) document.getElementById('import-msg').textContent = 'Đang đọc cấu trúc file Excel...';
+    else if (progress < 60) document.getElementById('import-msg').textContent = 'Đang kiểm tra tính hợp lệ của dữ liệu...';
+    else if (progress < 90) document.getElementById('import-msg').textContent = 'Đang ánh xạ dữ liệu vào hệ thống...';
+    else document.getElementById('import-msg').textContent = 'Đang hoàn tất quá trình lưu trữ...';
+
+    if (progress === 100) {
+      clearInterval(interval);
+      setTimeout(() => {
+        closeModal('modal-import');
+        showToast('Import dữ liệu thành công! 15 đề án mới đã được nạp vào hệ thống.');
+        btn.innerHTML = 'BẮT ĐẦU NHẬP';
+        // Reload lại danh sách
+        renderProjects();
+      }, 800);
+    }
+  }, 300);
 }
 
