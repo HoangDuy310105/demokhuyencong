@@ -1423,14 +1423,58 @@ function renderDashAdmin() {
       </tr></thead><tbody>
       ${AppData.projects.map(p => {
         const co = getCompany(p.companyId);
-        const act = ROLES.ADMIN.actions[p.status];
+        const role = ROLES.ADMIN;
+        const act = role.actions[p.status];
+        const canReject = role.rejectFrom && role.rejectFrom.includes(p.status);
+        let actionHtml = '';
+
+        if (p.status === -1) {
+          actionHtml = '<span class="bg-slate-100 text-slate-500 rounded-full px-3 py-1 text-xs font-bold inline-flex items-center"><i class="fa-solid fa-lock mr-2 text-[10px]"></i>Đã khóa</span>';
+        } else if (p.status === 10) {
+          actionHtml = '<span class="bg-emerald-50 text-emerald-600 rounded-full px-3 py-1 text-xs font-bold inline-flex items-center"><i class="fa-solid fa-check-double mr-1 text-[10px]"></i>Hoàn tất</span>';
+        } else if (act || canReject) {
+          // Hover Dropdown UI cho Admin
+          actionHtml = `
+          <div class="relative inline-block text-left group" onclick="event.stopPropagation();">
+            <button class="cursor-pointer inline-flex items-center justify-center w-full rounded-lg border border-indigo-200 shadow-sm px-4 py-2.5 bg-indigo-50 text-sm font-bold text-indigo-700 hover:bg-indigo-100 transition-colors focus:outline-none">
+              <i class="fa-solid fa-screwdriver-wrench mr-2 text-indigo-500"></i> Thao tác <i class="fa-solid fa-chevron-down ml-2 text-[10px] opacity-70 group-hover:-rotate-180 transition-transform duration-300"></i>
+            </button>
+            <div class="absolute z-50 right-0 top-full pt-1.5 w-56 invisible opacity-0 translate-y-2 group-hover:visible group-hover:opacity-100 group-hover:translate-y-0 transition-all duration-300 ease-out origin-top-right">
+              <div class="rounded-xl shadow-2xl bg-white border border-slate-100 divide-y divide-slate-50 overflow-hidden">
+                <div class="px-4 py-2.5 bg-slate-50/80"><p class="text-[10px] font-black uppercase text-slate-500 tracking-wider">Hành động khả dụng</p></div>
+                <div class="p-1">
+                  <a href="#" onclick="event.preventDefault(); viewProjectDetail('${p.id}');" class="text-slate-600 group/item flex items-center px-3 py-2 text-sm hover:bg-blue-50 rounded-lg hover:text-blue-700 font-medium transition-colors">
+                    <div class="w-7 h-7 rounded-md bg-white shadow-sm border border-slate-200 flex items-center justify-center mr-3 group-hover/item:border-blue-300 transition-colors">
+                      <i class="fa-regular fa-eye text-slate-400 group-hover/item:text-blue-600"></i>
+                    </div>Chi tiết hồ sơ
+                  </a>
+                  ${act ? `<a href="#" onclick="event.preventDefault(); roleAction('${p.id}',${act.nextStatus},'${act.label}');" class="text-slate-600 group/item flex items-center px-3 py-2 mt-1 text-sm hover:bg-emerald-50 rounded-lg hover:text-emerald-700 font-bold transition-colors">
+                    <div class="w-7 h-7 rounded-md bg-white shadow-sm border border-slate-200 flex items-center justify-center mr-3 group-hover/item:border-emerald-300 transition-colors">
+                      <i class="fa-solid fa-check text-slate-400 group-hover/item:text-emerald-600"></i>
+                    </div>${act.label}
+                  </a>` : ''}
+                </div>
+                ${canReject ? `<div class="p-1 bg-rose-50/30">
+                  <a href="#" onclick="event.preventDefault(); roleAction('${p.id}',0,'Từ chối');" class="text-rose-600 group/item flex items-center px-3 py-2 text-sm hover:bg-rose-100 rounded-lg hover:text-rose-800 font-bold transition-colors">
+                    <div class="w-7 h-7 rounded-md bg-white shadow-sm border border-rose-200 flex items-center justify-center mr-3 group-hover/item:border-rose-300 transition-colors">
+                      <i class="fa-solid fa-ban text-rose-400 group-hover/item:text-rose-600"></i>
+                    </div>Từ chối / Yêu cầu sửa
+                  </a>
+                </div>` : ''}
+              </div>
+            </div>
+          </div>`;
+        } else {
+          actionHtml = `<span class="inline-flex items-center text-[10px] text-slate-400 font-bold px-2 py-1 bg-slate-50 rounded-md border border-slate-100"><i class="fa-regular fa-clock mr-1"></i> Chờ ${STATUS[p.status+1]?.label.replace('Chờ ','') || '...'}</span>`;
+        }
+        
         return `<tr class="hover:bg-slate-50 cursor-pointer" onclick="viewProjectDetail('${p.id}')">
           <td class="px-4 py-3 font-bold text-slate-400 text-xs">${p.id}</td>
           <td class="px-4 py-3 font-semibold text-slate-800">${p.name}</td>
           <td class="px-4 py-3 text-slate-500 text-xs">${co.name||'-'}</td>
           <td class="px-4 py-3 text-right font-mono font-bold text-xs">${formatVND(p.budget||0)}</td>
           <td class="px-4 py-3 text-center">${statusBadge(p.status)}</td>
-          <td class="px-4 py-3 text-center">${act ? `<button class="action-btn ${act.cls} border-0 text-xs" onclick="event.stopPropagation();roleAction('${p.id}',${act.nextStatus},'${act.label}')">${act.label}</button>` : '<span class="text-xs text-slate-400">—</span>'}</td>
+          <td class="px-4 py-3 text-center whitespace-nowrap">${actionHtml}</td>
         </tr>`;
       }).join('')}
       </tbody></table>
