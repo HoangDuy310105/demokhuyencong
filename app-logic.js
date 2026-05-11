@@ -820,55 +820,63 @@ function viewProjectDetail(pid) {
 }
 
 function renderWorkflowBar(currentStatus, fullMode = false) {
-  const steps = Object.entries(STATUS);
-  const total = steps.length - 1; // chỉ số lớn nhất
-  const pct = Math.round((currentStatus / total) * 100);
+  // Lọc chỉ lấy các bước dương (0-10), bỏ bước -1 (Bị từ chối) khỏi thanh chính
+  const steps = Object.entries(STATUS).filter(([k]) => parseInt(k) >= 0);
+  const totalSteps = steps.length - 1;
+  const pct = currentStatus < 0 ? 0 : Math.round((currentStatus / totalSteps) * 100);
 
   if (!fullMode) {
-    // Thanh tiến độ thu nhỏ cho dòng bảng — dạng chấm
     const dots = steps.map(([k]) => {
       const s = parseInt(k);
       let cls = '';
       if (s < currentStatus)  cls = 'bg-blue-500';
       else if (s === currentStatus) cls = 'bg-amber-400 ring-2 ring-amber-300 ring-offset-1';
       else cls = 'bg-slate-200';
-      return `<div title="${STATUS[k].label}" class="w-2.5 h-2.5 rounded-full ${cls} transition-all"></div>`;
-    }).join('<div class="w-3 h-0.5 bg-slate-200"></div>');
+      return `<div title="${STATUS[k].label}" class="w-2 h-2 rounded-full ${cls} transition-all"></div>`;
+    }).join('<div class="w-2 h-0.5 bg-slate-100"></div>');
     return `<div class="flex items-center gap-0">${dots}</div>`;
   }
 
-  // Thanh tiến độ đầy đủ cho Modal
   return `
-    <div class="w-full">
-      <div class="flex items-center justify-between mb-2">
-        <span class="text-[10px] font-black text-slate-500 uppercase tracking-widest">Tiến trình xét duyệt</span>
-        <span class="text-[10px] font-black text-blue-600">${pct}% hoàn thành</span>
+    <div class="w-full py-4">
+      <div class="flex items-center justify-between mb-4">
+        <span class="text-[10px] font-black text-slate-500 uppercase tracking-widest">Tiến trình xét duyệt đề án</span>
+        <span class="text-[10px] font-black ${currentStatus === 10 ? 'text-emerald-600' : 'text-blue-600'} bg-slate-50 px-2 py-1 rounded-full border border-slate-100">
+          ${currentStatus === 10 ? 'Đã hoàn tất' : pct + '% hoàn thành'}
+        </span>
       </div>
-      <div class="relative">
-        <!-- Đường kết nối nền -->
-        <div class="absolute top-4 left-0 right-0 h-0.5 bg-slate-200" style="margin:0 1.25rem"></div>
-        <!-- Đường tiến trình -->
-        <div class="absolute top-4 left-0 h-0.5 bg-blue-500 transition-all duration-700" style="margin-left:1.25rem;width:calc(${pct}% - 2.5rem * ${pct}/100)"></div>
-        <!-- Steps -->
+      <div class="relative px-2">
+        <!-- Đường nền -->
+        <div class="absolute top-4 left-4 right-4 h-1 bg-slate-100 rounded-full"></div>
+        <!-- Đường màu (Tiến độ) -->
+        <div class="absolute top-4 left-4 h-1 bg-blue-500 rounded-full transition-all duration-1000" style="width: calc(${pct}% - ${pct === 100 ? '0px' : '8px'})"></div>
+        
         <div class="relative flex justify-between">
           ${steps.map(([k,v]) => {
             const s = parseInt(k);
             const done = s < currentStatus;
             const active = s === currentStatus;
-            const future = s > currentStatus;
-            return `<div class="flex flex-col items-center gap-1.5" style="min-width:1.5rem">
-              <div class="w-8 h-8 rounded-full flex items-center justify-center text-xs font-black border-2 shadow-sm transition-all ${
-                done   ? 'bg-blue-600 border-blue-600 text-white' :
-                active ? 'bg-white border-amber-400 text-amber-500 ring-4 ring-amber-100' :
-                         'bg-white border-slate-200 text-slate-300'}"
-              >${done ? '<i class="fa-solid fa-check text-xs"></i>' : s === 5 ? '<i class="fa-solid fa-trophy text-xs"></i>' : s+1}</div>
-              <div class="text-center" style="min-width:4rem;margin-left:-0.75rem">
-                <div class="text-[9px] font-black leading-tight ${
-                  done ? 'text-blue-600' : active ? 'text-amber-600' : 'text-slate-300'
-                }">${v.label.replace('Chờ duyệt ','')}</div>
-                ${active ? '<div class="text-[8px] text-amber-500 font-bold">● Hiện tại</div>' : ''}
+            const isTrophy = s === 10;
+            
+            return `
+              <div class="flex flex-col items-center group" style="width: ${100/steps.length}%">
+                <!-- Vòng tròn số -->
+                <div class="w-8 h-8 rounded-full flex items-center justify-center text-[10px] font-black z-10 border-2 transition-all duration-300 ${
+                  done   ? 'bg-blue-600 border-blue-600 text-white shadow-lg shadow-blue-200' :
+                  active ? 'bg-white border-amber-400 text-amber-600 ring-4 ring-amber-50 shadow-md' :
+                           'bg-white border-slate-200 text-slate-300'
+                }">
+                  ${done ? '<i class="fa-solid fa-check"></i>' : isTrophy ? '<i class="fa-solid fa-trophy"></i>' : (s + 1)}
+                </div>
+                <!-- Nhãn chữ -->
+                <div class="mt-3 px-1 text-center">
+                  <div class="text-[8px] sm:text-[9px] font-bold leading-tight break-words uppercase ${
+                    done ? 'text-slate-600' : active ? 'text-amber-700' : 'text-slate-300'
+                  }" style="max-width: 65px; margin: 0 auto;">${v.label}</div>
+                  ${active ? '<div class="mt-1 text-[7px] text-amber-500 font-black animate-pulse">● HIỆN TẠI</div>' : ''}
+                </div>
               </div>
-            </div>`;
+            `;
           }).join('')}
         </div>
       </div>
