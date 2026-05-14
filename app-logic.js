@@ -1498,7 +1498,6 @@ function renderDashAdmin() {
 }
 
 
-
 // ---- KHỞI TẠO ----
 window.addEventListener('load', () => {
   populateCompanyDropdown();
