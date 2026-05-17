@@ -83,10 +83,42 @@ function handleMenuClick(el, view, filterStatus) {
 }
 
 // ---- ĐIỀU HƯỚNG ----
+function syncSidebarHighlight(v) {
+  v = v || State.view;
+  document.querySelectorAll('.nav-item').forEach(el => el.classList.remove('active'));
+  
+  let menu = null;
+  if (v === 'projects') {
+    const currentStatus = State.projectFilter.status;
+    if (currentStatus !== -1 && currentStatus !== null && currentStatus !== undefined && !isNaN(currentStatus)) {
+      menu = document.querySelector(`.nav-item[data-filter="${currentStatus}"]`);
+    } else {
+      menu = document.querySelector(`.nav-item[onclick*="'projects'"]:not([data-filter])`) || document.querySelector(`.nav-item[onclick*="'projects'"][data-filter="null"]`);
+    }
+  }
+  if (!menu) {
+    menu = document.getElementById('menu-' + v) || document.querySelector(`.nav-item[onclick*="'${v}'"]`);
+  }
+  
+  if (menu) {
+    menu.classList.add('active');
+    const breadcrumb = document.getElementById('breadcrumb-view');
+    if (breadcrumb) {
+      const clone = menu.cloneNode(true);
+      const badge = clone.querySelector('span');
+      if(badge) badge.remove();
+      breadcrumb.textContent = clone.textContent.trim();
+      
+      breadcrumb.style.animation = 'none';
+      breadcrumb.offsetHeight;
+      breadcrumb.style.animation = 'fadeIn 0.3s ease forwards';
+    }
+  }
+}
+
 function switchView(v) {
   State.view = v;
   document.querySelectorAll('.view-section').forEach(el => el.classList.remove('active-view'));
-  document.querySelectorAll('.nav-item').forEach(el => el.classList.remove('active'));
   const section = document.getElementById('view-' + v);
   if (section) {
     section.classList.add('active-view');
@@ -94,23 +126,7 @@ function switchView(v) {
     section.offsetHeight; /* kích hoạt tải lại (reflow) */
     section.style.animation = 'fadeIn 0.3s ease forwards';
   }
-  const menu = document.getElementById('menu-' + v) || document.querySelector(`.nav-item[onclick*="'${v}'"]`);
-  if (menu) {
-    menu.classList.add('active');
-    const breadcrumb = document.getElementById('breadcrumb-view');
-    if (breadcrumb) {
-      // Lấy văn bản bỏ qua phần số lượng
-      const clone = menu.cloneNode(true);
-      const badge = clone.querySelector('span');
-      if(badge) badge.remove();
-      breadcrumb.textContent = clone.textContent.trim();
-      
-      // Hiệu ứng mờ dần cho chữ
-      breadcrumb.style.animation = 'none';
-      breadcrumb.offsetHeight;
-      breadcrumb.style.animation = 'fadeIn 0.3s ease forwards';
-    }
-  }
+  syncSidebarHighlight(v);
   if (v === 'dashboard') renderDashboard();
   else if (v === 'projects')  renderProjects();
   else if (v === 'funds')     renderFunds();
@@ -715,6 +731,7 @@ function filterProjects() {
   State.projectFilter.status = parseInt(document.getElementById('proj-status-filter').value);
   State.projectFilter.field  = parseInt(document.getElementById('proj-field-filter').value);
   renderProjects();
+  syncSidebarHighlight('projects');
 }
 
 function showApproveMenu(pid, btn) {
@@ -1563,9 +1580,22 @@ function renderDashAdmin() {
 }
 
 
+function populateStatusFilterDropdown() {
+  const sel = document.getElementById('proj-status-filter');
+  if (!sel) return;
+  
+  let html = '<option value="-1">Tất cả trạng thái</option>';
+  Object.entries(STATUS).forEach(([key, val]) => {
+    if (key === '-1') return;
+    html += `<option value="${key}">${val.label}</option>`;
+  });
+  sel.innerHTML = html;
+}
+
 // ---- KHỞI TẠO ----
 window.addEventListener('load', () => {
   populateCompanyDropdown();
+  populateStatusFilterDropdown();
   // Hiển thị màn hình đăng nhập trước — loginAs() sẽ khởi động phần còn lại
 });
 
