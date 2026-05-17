@@ -1107,6 +1107,12 @@ function submitDisbursal(pid, remaining, type) {
 }
 
 function saveNewCompany() {
+  // Kiểm tra quyền nghiệp vụ (Chỉ Sở và Admin mới được phép thêm)
+  if (State.currentRole !== 'SO' && State.currentRole !== 'ADMIN') {
+    showToast('Bạn không có quyền thực hiện hành động này!', 'error');
+    return;
+  }
+
   const name = document.getElementById('co-name').value;
   const type = document.getElementById('co-type').value;
   const tax = document.getElementById('co-tax').value;
@@ -1133,6 +1139,17 @@ function saveNewCompany() {
 // ---- DOANH NGHIỆP ----
 function renderCompanies(highlight = null) {
   State.selectedCompany = highlight;
+
+  // Logic kiểm soát hiển thị nút thêm mới doanh nghiệp theo vai trò
+  const btnCreate = document.getElementById('btn-create-company');
+  if (btnCreate) {
+    if (State.currentRole === 'SO' || State.currentRole === 'ADMIN') {
+      btnCreate.classList.remove('hidden');
+    } else {
+      btnCreate.classList.add('hidden');
+    }
+  }
+
   const grid = document.getElementById('companies-grid');
   grid.innerHTML = AppData.companies.map(co => {
     const projs = getProjectsByCompany(co.id);
