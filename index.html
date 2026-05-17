@@ -213,7 +213,15 @@
       <div id="companies-grid" class="grid grid-cols-4 gap-4"></div>
     </div>
     <div id="view-ocop" class="view-section p-6 space-y-5">
-      <h1 class="text-2xl font-black text-slate-900">Danh mục Sản phẩm OCOP</h1>
+      <div class="flex justify-between items-center">
+        <div>
+          <h1 class="text-2xl font-black text-slate-900">Danh mục Sản phẩm OCOP</h1>
+          <p class="text-slate-500 text-sm mt-1">Sản phẩm công nghiệp nông thôn tiêu biểu đạt giải</p>
+        </div>
+        <button id="btn-create-ocop" onclick="openModal('modal-create-ocop')" class="bg-amber-600 text-white px-5 py-2.5 rounded-xl font-bold shadow-lg shadow-amber-500/30 hover:opacity-90 flex items-center gap-2 hidden">
+          <i class="fa-solid fa-award"></i> THÊM MỚI SẢN PHẨM
+        </button>
+      </div>
       <div id="ocop-grid" class="grid grid-cols-3 gap-4"></div>
     </div>
     <div id="view-kpi" class="view-section p-6 space-y-5">
@@ -351,6 +359,56 @@
     </div>
   </div>
 </div>
+
+<!-- Modal Create OCOP Product -->
+<div id="modal-create-ocop" class="modal-bg hidden">
+  <div class="bg-white w-[500px] rounded-2xl shadow-2xl flex flex-col overflow-hidden scale-95 transition-transform" onclick="event.stopPropagation()">
+    <div class="p-5 bg-amber-600 flex justify-between items-center shrink-0">
+      <h2 class="text-white font-black text-lg"><i class="fa-solid fa-award mr-2"></i>Thêm mới Sản phẩm OCOP</h2>
+      <button onclick="closeModal('modal-create-ocop')" class="text-white/60 hover:text-white text-xl"><i class="fa-solid fa-xmark"></i></button>
+    </div>
+    <div class="p-6 space-y-4">
+      <div>
+        <label class="block text-xs font-bold text-slate-500 uppercase mb-1">Tên Sản phẩm OCOP <span class="text-rose-500">*</span></label>
+        <input id="ocop-name" type="text" class="w-full border border-slate-300 rounded-lg px-3 py-2 outline-none focus:border-amber-500 text-sm font-semibold" placeholder="Ví dụ: Chè móc câu Tân Cương">
+      </div>
+      <div>
+        <label class="block text-xs font-bold text-slate-500 uppercase mb-1">Cơ sở / Doanh nghiệp sản xuất <span class="text-rose-500">*</span></label>
+        <input id="ocop-company" type="text" class="w-full border border-slate-300 rounded-lg px-3 py-2 outline-none focus:border-amber-500 text-sm font-semibold" placeholder="Ví dụ: HTX Chè Tân Cương">
+      </div>
+      <div class="grid grid-cols-2 gap-4">
+        <div>
+          <label class="block text-xs font-bold text-slate-500 uppercase mb-1">Phân nhóm Ngành hàng <span class="text-rose-500">*</span></label>
+          <select id="ocop-category" class="w-full border border-slate-300 rounded-lg px-3 py-2 outline-none focus:border-amber-500 text-sm font-semibold">
+            <option value="">-- Chọn ngành hàng --</option>
+            <option value="Thực phẩm">Thực phẩm</option>
+            <option value="Đồ uống">Đồ uống</option>
+            <option value="Thảo dược">Thảo dược</option>
+            <option value="Thủ công mỹ nghệ">Thủ công mỹ nghệ</option>
+            <option value="Vải, may mặc">Vải, may mặc</option>
+          </select>
+        </div>
+        <div>
+          <label class="block text-xs font-bold text-slate-500 uppercase mb-1">Phân hạng Sao đạt giải <span class="text-rose-500">*</span></label>
+          <select id="ocop-stars" class="w-full border border-slate-300 rounded-lg px-3 py-2 outline-none focus:border-amber-500 text-sm font-semibold">
+            <option value="3">3 Sao ⭐⭐⭐</option>
+            <option value="4" selected>4 Sao ⭐⭐⭐⭐</option>
+            <option value="5">5 Sao ⭐⭐⭐⭐⭐</option>
+          </select>
+        </div>
+      </div>
+      <div>
+        <label class="block text-xs font-bold text-slate-500 uppercase mb-1">Ngày cấp chứng nhận OCOP</label>
+        <input id="ocop-certified" type="date" class="w-full border border-slate-300 rounded-lg px-3 py-2 outline-none focus:border-amber-500 text-sm font-semibold" value="2024-05-17">
+      </div>
+    </div>
+    <div class="bg-slate-50 p-4 border-t border-slate-200 flex justify-end gap-3">
+      <button onclick="closeModal('modal-create-ocop')" class="px-5 py-2.5 font-bold text-slate-500 hover:bg-slate-200 rounded-lg">Hủy</button>
+      <button onclick="saveNewOcop()" class="bg-amber-600 text-white px-6 py-2.5 rounded-lg font-bold shadow-md hover:bg-amber-700">Lưu sản phẩm</button>
+    </div>
+  </div>
+</div>
+
 <!-- MODAL: CONFIRM CUSTOM -->
 <div id="modal-confirm" class="modal-bg hidden opacity-0 transition-all duration-300 pointer-events-none">
   <div class="panel p-6 w-full max-w-md transform scale-90 transition-all duration-300 shadow-2xl border-2 border-white/20">

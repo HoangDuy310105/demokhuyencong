@@ -1204,6 +1204,16 @@ function filterProjectsByCompany(cid) {
 
 // ---- SẢN PHẨM OCOP ----
 function renderOcop() {
+  // Logic kiểm soát nút thêm mới sản phẩm OCOP theo vai trò (Chỉ Sở CT và Admin)
+  const btnCreateOcop = document.getElementById('btn-create-ocop');
+  if (btnCreateOcop) {
+    if (State.currentRole === 'SO' || State.currentRole === 'ADMIN') {
+      btnCreateOcop.classList.remove('hidden');
+    } else {
+      btnCreateOcop.classList.add('hidden');
+    }
+  }
+
   document.getElementById('ocop-grid').innerHTML = AppData.ocop.map(o => `
     <div class="panel p-5 hover:shadow-md transition-shadow">
       <div class="flex justify-between items-start mb-3">
@@ -1214,6 +1224,44 @@ function renderOcop() {
       <p class="text-xs text-slate-500 mb-3">${o.company}</p>
       <div class="text-[10px] text-slate-400 font-bold uppercase">Cấp chứng nhận: <span class="text-slate-600">${o.certified}</span></div>
     </div>`).join('');
+}
+
+function saveNewOcop() {
+  // Bảo mật phía client: Chỉ cho phép Sở CT (SO) và Admin thực hiện
+  if (State.currentRole !== 'SO' && State.currentRole !== 'ADMIN') {
+    showToast('Bạn không có quyền thực hiện hành động này!', 'error');
+    return;
+  }
+
+  const name = document.getElementById('ocop-name').value;
+  const company = document.getElementById('ocop-company').value;
+  const category = document.getElementById('ocop-category').value;
+  const stars = parseInt(document.getElementById('ocop-stars').value);
+  const certified = document.getElementById('ocop-certified').value;
+
+  if (!name) { showToast('Vui lòng nhập tên sản phẩm OCOP!', 'error'); return; }
+  if (!company) { showToast('Vui lòng nhập tên cơ sở sản xuất!', 'error'); return; }
+  if (!category) { showToast('Vui lòng chọn ngành hàng!', 'error'); return; }
+
+  const newId = 'OCOP' + (AppData.ocop.length + 1).toString().padStart(2, '0');
+  AppData.ocop.unshift({
+    id: newId,
+    name: name,
+    company: company,
+    stars: stars,
+    category: category,
+    certified: certified || 'Chưa cập nhật'
+  });
+
+  closeModal('modal-create-ocop');
+  showToast('Đã thêm sản phẩm OCOP ' + name + ' thành công!');
+  
+  // Reset input values
+  document.getElementById('ocop-name').value = '';
+  document.getElementById('ocop-company').value = '';
+  document.getElementById('ocop-category').value = '';
+  
+  renderOcop();
 }
 
 // ---- CHỈ TIÊU KPI ----
